@@ -1,9 +1,9 @@
-import path from 'path';
-import webpack from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import CleanWebpackPlugin from 'clean-webpack-plugin';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
 	entry: {
@@ -85,7 +85,6 @@ module.exports = {
 	],
 	devtool: 'source-map',
 	devServer: {
-		contentBase: './dist',
-		hot: true
+		contentBase: './dist'
 	}
 };
