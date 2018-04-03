@@ -4,10 +4,9 @@
   "description": "The game.",
   "main": "index.js",
   "scripts": {
-    "check": "nsp check",
-    "test": "test",
-    "start": "webpack-dev-server --open --config webpack.dev.babel.js",
-    "build": "webpack --config webpack.prod.babel.js"
+    "check": "nsp check"
+    "start": "webpack-dev-server --open --config webpack.config.babel.js",
+    "build": "webpack --config webpack.config.babel.js"
   },
   "repository": {
     "type": "git",
