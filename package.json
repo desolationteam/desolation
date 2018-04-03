@@ -6,7 +6,7 @@
 	"scripts": {
 		"check": "nsp check",
 		"start": "webpack-dev-server --open --config webpack.config.js",
-		"build": "webpack --mode production --config webpack.config.babel.js"
+		"build": "webpack --mode production --config webpack.config.js"
 	},
 	"repository": {
 		"type": "git",
@@ -44,6 +44,7 @@
 		"webpack-dev-server": "^3.1.1"
 	},
 	"dependencies": {
+		"normalize.css": "^8.0.0",
 		"three": "^0.91.0",
 		"three-fbx-loader": "^1.0.3"
 	}
