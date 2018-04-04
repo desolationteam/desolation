@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import Box from './Box';
+import Player from './Player';
 
 export default class Application {
 	constructor() {
@@ -16,15 +17,16 @@ export default class Application {
 		this.setupLights();
 		this.setupFloor();
 
-		this.box = new Box();
-		this.scene.add(this.box.mesh);
+		this.box = new Box(this.scene);
+		this.player = new Player(this.scene, this.camera);
 
 		window.addEventListener('resize', () => this.resize(), false);
 	}
 
 	render() {
-		// this.controls.update();
+		this.player.update();
 		this.box.update();
+
 		this.renderer.render(this.scene, this.camera);
 		requestAnimationFrame(() => this.render());
 	}
@@ -43,7 +45,6 @@ export default class Application {
 
 	setupCamera() {
 		this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 1000);
-		this.camera.position.set(-50, 10, -20);
 	}
 
 	resize() {
