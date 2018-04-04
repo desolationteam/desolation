@@ -1,2 +1,2 @@
 # DESOLATION
-desolationteam.github.io/desolation/
+https://desolationteam.github.io/desolation/
