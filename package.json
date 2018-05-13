@@ -5,7 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"check": "nsp check",
-		"start": "webpack-dev-server --open --config webpack.config.js",
+		"start": "nodemon server.js",
+		"startDevServer": "webpack-dev-server --open --config webpack.config.js",
 		"build": "webpack --mode production --config webpack.config.js"
 	},
 	"repository": {
@@ -29,14 +30,17 @@
 		"clean-webpack-plugin": "^0.1.19",
 		"css-loader": "^0.28.11",
 		"eslint": "^4.19.1",
+		"express": "^4.16.3",
 		"file-loader": "^1.1.11",
 		"html-loader": "^0.5.5",
 		"html-webpack-plugin": "^3.1.0",
 		"mini-css-extract-plugin": "^0.4.0",
 		"node-sass": "^4.8.3",
+		"nodemon": "^1.17.3",
 		"nsp": "^3.2.1",
 		"raw-loader": "^0.5.1",
 		"sass-loader": "^6.0.7",
+		"socket.io": "^2.1.0",
 		"style-loader": "^0.20.3",
 		"uglifyjs-webpack-plugin": "^1.2.4",
 		"webpack": "^4.4.1",
@@ -45,6 +49,7 @@
 	},
 	"dependencies": {
 		"normalize.css": "^8.0.0",
+		"socket.io-client": "^2.1.0",
 		"three": "^0.91.0",
 		"three-fbx-loader": "^1.0.3"
 	}

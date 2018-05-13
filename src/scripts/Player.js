@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import PointerLockControls from './PointerLockControls';
+import io from 'socket.io-client';
+
 
 export default class Player {
 	constructor(scene, camera) {
@@ -10,59 +12,41 @@ export default class Player {
 		camera.position.set(0,8,20);
 		this.controls = new PointerLockControls(this.mesh);
 		scene.add(this.controls.getObject());
-	}
 
-	update() {
-		this.updateControls();
-	}
+		this.socket = io.connect();
+		this.socket.emit('new player', {
+			position: this.controls.getObject().position,
+			rotation: this.controls.getObject().rotation
+		});
 
-	updateControls() {
-		let velocity = new THREE.Vector3();
-		// Are the controls enabled? (Does the browser have pointer lock?)
-		if (this.controls.controlsEnabled) {
-
-			// Save the current time
-			// Create a delta value based on current time
-			var delta = 0.075;
-
-			// Set the velocity.x and velocity.z using the calculated time delta
-			velocity.x -= velocity.x * 10.0 * delta;
-			velocity.z -= velocity.z * 10.0 * delta;
-
-			// As velocity.y is our "gravity," calculate delta
-			velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
-
-			if (this.controls.moveForward) {
-				velocity.z -= 400.0 * delta;
-			}
-
-			if (this.controls.moveBackward) {
-				velocity.z += 400.0 * delta;
-			}
-
-			if (this.controls.moveLeft) {
-				velocity.x -= 400.0 * delta;
-			}
-
-			if (this.controls.moveRight) {
-				velocity.x += 400.0 * delta;
-			}
-
+		this.socket.on('update position', velocity => {
 			// Update the position using the changed delta
-			this.controls.getObject().translateX(velocity.x * delta);
-			this.controls.getObject().translateY(velocity.y * delta);
-			this.controls.getObject().translateZ(velocity.z * delta);
+			this.controls.getObject().translateX(velocity.x);
+			this.controls.getObject().translateY(velocity.y);
+			this.controls.getObject().translateZ(velocity.z);
 
 			// Prevent the camera/player from falling out of the 'world'
 			if (this.controls.getObject().position.y < 10) {
-
 				velocity.y = 0;
 				this.controls.getObject().position.y = 10;
-
 			}
+		});
+	}
 
-			// Save the time for future delta calculations
-
+	update() {
+		// this.updateControls();
+		if (this.controls.moveForward) {
+			this.socket.emit('move forward');
+		}
+		if (this.controls.moveBackward) {
+			this.socket.emit('move backward');
+		}
+		if (this.controls.moveLeft){
+			this.socket.emit('move left');
+		}
+		if (this.controls.moveRight){
+			this.socket.emit('move right');
 		}
 	}
+
 }
