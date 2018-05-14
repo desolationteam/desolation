@@ -1,18 +1,22 @@
 import * as THREE from 'three';
 
 export default class Box {
-	constructor(scene) {
-		const geometry = new THREE.BoxGeometry(10, 10, 10);
+	constructor(scene, data) {
+		const geometry = new THREE.BoxGeometry(5, 5, 5);
 		const material = new THREE.MeshNormalMaterial();
 		this.mesh = new THREE.Mesh(geometry, material);
-		this.mesh.position.y = 10;
-		this.mesh.position.x = -50;
-		this.mesh.position.z = -50;
+		this.mesh.position.y = data.position.y;
+		this.mesh.position.x = data.position.x;
+		this.mesh.position.z = data.position.z;
+		// this.mesh.rotation.y = data.rotation._y;
+		// this.mesh.rotation.x = data.rotation._x;
+		// this.mesh.rotation.z = data.rotation._z;
 		scene.add(this.mesh);
 	}
 
-	update() {
-		this.mesh.rotation.x += 0.02;
-		this.mesh.rotation.y += 0.02;
+	update(data) {
+		this.mesh.position.y = data.position.y;
+		this.mesh.position.x = data.position.x;
+		this.mesh.position.z = data.position.z;
 	}
 }

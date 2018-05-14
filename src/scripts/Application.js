@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import Box from './Box';
 import Player from './Player';
+import io from 'socket.io-client';
 
 export default class Application {
 	constructor() {
@@ -17,16 +18,27 @@ export default class Application {
 		this.setupLights();
 		this.setupFloor();
 
-		this.box = new Box(this.scene);
-		this.player = new Player(this.scene, this.camera);
+		this.otherPlayers = [];
+		this.socket = io.connect();
+		this.socket.on('create player', (data) => {
+			const player = new Box(this.scene, data.state);
+			player.index = data.index;
+			this.otherPlayers.push(player);
+		});
+		this.socket.on('update player', (data) => {
+			this.otherPlayers.forEach(player => {
+				if(player.index === data.index) {
+					player.update(data.state);
+				}
+			});
+		});
+		this.player = new Player(this.socket, this.scene, this.camera);
 
 		window.addEventListener('resize', () => this.resize(), false);
 	}
 
 	render() {
 		this.player.update();
-		this.box.update();
-
 		this.renderer.render(this.scene, this.camera);
 		requestAnimationFrame(() => this.render());
 	}
@@ -61,8 +73,8 @@ export default class Application {
 	}
 
 	setupFloor() {
-		const geometry = new THREE.PlaneGeometry(100, 100, 32);
-		const material = new THREE.MeshBasicMaterial({color: 0x000000, side: THREE.DoubleSide, wireframe: true});
+		const geometry = new THREE.PlaneGeometry(500, 500, 32);
+		const material = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide, wireframe: true });
 		this.floor = new THREE.Mesh(geometry, material);
 		this.floor.rotation.x = Math.PI / 2;
 		this.floor.position.x = -50;

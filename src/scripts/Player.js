@@ -1,10 +1,8 @@
 import * as THREE from 'three';
 import PointerLockControls from './PointerLockControls';
-import io from 'socket.io-client';
-
 
 export default class Player {
-	constructor(scene, camera) {
+	constructor(socket, scene, camera) {
 		const geometry = new THREE.BoxGeometry(5, 5, 5);
 		const material = new THREE.MeshNormalMaterial();
 		this.mesh = new THREE.Mesh(geometry, material);
@@ -13,7 +11,7 @@ export default class Player {
 		this.controls = new PointerLockControls(this.mesh);
 		scene.add(this.controls.getObject());
 
-		this.socket = io.connect();
+		this.socket = socket;
 		this.socket.emit('new player', {
 			position: this.controls.getObject().position,
 			rotation: this.controls.getObject().rotation
@@ -21,15 +19,26 @@ export default class Player {
 
 		this.socket.on('update position', velocity => {
 			// Update the position using the changed delta
-			this.controls.getObject().translateX(velocity.x);
-			this.controls.getObject().translateY(velocity.y);
-			this.controls.getObject().translateZ(velocity.z);
+			if (velocity.x) {
+				this.controls.getObject().translateX(velocity.x);
+			}
+			if (velocity.y) {
+				this.controls.getObject().translateY(velocity.y);
+			}
+			if (velocity.z) {
+				this.controls.getObject().translateZ(velocity.z);
+			}
 
 			// Prevent the camera/player from falling out of the 'world'
 			if (this.controls.getObject().position.y < 10) {
 				velocity.y = 0;
 				this.controls.getObject().position.y = 10;
 			}
+
+			this.socket.emit('current position', {
+				position: this.controls.getObject().position,
+				rotation: this.controls.getObject().rotation
+			});
 		});
 	}
 
