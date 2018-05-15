@@ -15,6 +15,7 @@ export default class Box {
 	}
 
 	update(data) {
+		console.log('update');
 		this.mesh.position.y = data.position.y;
 		this.mesh.position.x = data.position.x;
 		this.mesh.position.z = data.position.z;

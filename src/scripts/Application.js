@@ -35,6 +35,12 @@ export default class Application {
 			});
 		});
 
+		this.socket.on('remove player', index => {
+			const i = this.otherPlayers.findIndex(player => player.index === index);
+			this.scene.remove(this.otherPlayers[i].mesh);
+			this.otherPlayers.splice(i, 1);
+		});
+
 		window.addEventListener('resize', () => this.resize(), false);
 	}
 
