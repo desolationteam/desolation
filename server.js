@@ -43,32 +43,25 @@ function setListeners(socket) {
 
 		playersData.forEach(data => {if (data) socket.emit('create player', data);});
 	});
-	socket.on('move forward', () => {
-		const velocity = new THREE.Vector3();
-		velocity.z -= 2;
 
+	socket.on('move', (direction) => {
+		const velocity = new THREE.Vector3();
+		switch (direction) {
+			case 'forward':
+				velocity.z -= 2;
+				break;
+			case 'backward':
+				velocity.z += 2;
+				break;
+			case 'left':
+				velocity.x -= 2;
+				break;
+			case 'right':
+				velocity.x += 2;
+				break;
+			default:
+				break;
+		}
 		socket.emit('update position', velocity);
 	});
-
-	socket.on('move backward', () => {
-		const velocity = new THREE.Vector3();
-		velocity.z += 2;
-
-		socket.emit('update position', velocity);
-	});
-
-	socket.on('move left', () => {
-		const velocity = new THREE.Vector3();
-		velocity.x -= 2;
-
-		socket.emit('update position', velocity);
-	});
-
-	socket.on('move right', () => {
-		const velocity = new THREE.Vector3();
-		velocity.x += 2;
-
-		socket.emit('update position', velocity);
-	});
-
 }

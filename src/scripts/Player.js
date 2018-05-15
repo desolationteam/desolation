@@ -48,16 +48,16 @@ export default class Player {
 	update() {
 		// this.updateControls();
 		if (this.controls.moveForward) {
-			this.socket.emit('move forward');
+			this.socket.emit('move', 'forward');
 		}
 		if (this.controls.moveBackward) {
-			this.socket.emit('move backward');
+			this.socket.emit('move', 'backward');
 		}
 		if (this.controls.moveLeft){
-			this.socket.emit('move left');
+			this.socket.emit('move', 'left');
 		}
 		if (this.controls.moveRight){
-			this.socket.emit('move right');
+			this.socket.emit('move', 'right');
 		}
 	}
 
