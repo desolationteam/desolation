@@ -7,7 +7,7 @@
 		"check": "nsp check",
 		"start": "nodemon server.js",
 		"startDevServer": "webpack-dev-server --open --config webpack.config.js",
-		"build": "webpack --mode production --config webpack.config.js"
+		"build": "webpack --mode production --config webpack.config.js --watch"
 	},
 	"repository": {
 		"type": "git",

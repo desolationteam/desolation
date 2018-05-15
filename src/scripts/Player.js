@@ -48,17 +48,23 @@ export default class Player {
 	update() {
 		// this.updateControls();
 		if (this.controls.moveForward) {
-			this.socket.emit('move', 'forward');
+			emitMotionEvent(this.socket, 'forward');
 		}
 		if (this.controls.moveBackward) {
-			this.socket.emit('move', 'backward');
+			emitMotionEvent(this.socket, 'backward');
 		}
 		if (this.controls.moveLeft){
-			this.socket.emit('move', 'left');
+			emitMotionEvent(this.socket, 'left');
 		}
 		if (this.controls.moveRight){
-			this.socket.emit('move', 'right');
+			emitMotionEvent(this.socket, 'right');
 		}
 	}
 
 }
+
+function emitMotionEvent(socket, direction) {
+	socket.emit('move', direction);
+}
+
+// const emitMotionEventDebounced = debouncedDelay(emitMotionEvent, 20);

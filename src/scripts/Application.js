@@ -3,6 +3,21 @@ import Box from './Box';
 import Player from './Player';
 import io from 'socket.io-client';
 
+function debouncedDelay(func, delay) {
+	let timeout;
+
+	const debounced = function (...args) {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => func.apply(this, args), delay);
+	};
+
+	debounced.cancel = () => clearTimeout(timeout);
+
+	return debounced;
+}
+
+const requestAnimationFrameDebounced = debouncedDelay(requestAnimationFrame, 20);
+
 export default class Application {
 	constructor() {
 		this.width = window.innerWidth;
@@ -47,7 +62,7 @@ export default class Application {
 	render() {
 		this.player.update();
 		this.renderer.render(this.scene, this.camera);
-		requestAnimationFrame(() => this.render());
+		requestAnimationFrameDebounced(() => this.render());
 	}
 
 	setupRenderer() {
