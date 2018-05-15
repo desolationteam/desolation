@@ -1,18 +1,17 @@
+const path = require('path');
 const THREE = require('three');
-
 const express = require('express');
 const compression = require('compression');
 const app = express();
-app.use(express.static('dist'));
+app.use(express.static(path.join(__dirname, 'dist')));
 app.use(compression());
 const server = require('http').createServer(app);
-const io = require('socket.io').listen(server);
+const socketIO = require('socket.io');
+const io = socketIO(server);
+server.listen(process.env.PORT || 5000);
 
 let playersCount = 0;
-
 const connections = [];
-
-server.listen(3000);
 
 io.on('connection', socket => {
 	playersCount++;
