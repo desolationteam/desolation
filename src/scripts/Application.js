@@ -1,68 +1,33 @@
 import * as THREE from 'three';
-import Box from './Box';
-import Player from './Player';
 import io from 'socket.io-client';
 
-function debouncedDelay(func, delay) {
-	let timeout;
-
-	const debounced = function (...args) {
-		clearTimeout(timeout);
-		timeout = setTimeout(() => func.apply(this, args), delay);
-	};
-
-	debounced.cancel = () => clearTimeout(timeout);
-
-	return debounced;
-}
-
-const requestAnimationFrameDebounced = debouncedDelay(requestAnimationFrame, 20);
+import Box from './Box';
+import Player from './Player';
 
 export default class Application {
 	constructor() {
-		this.width = window.innerWidth;
-		this.height = window.innerHeight;
 		this.init();
 		this.render();
 	}
 
 	init() {
+		this.width = window.innerWidth;
+		this.height = window.innerHeight;
 		this.scene = new THREE.Scene();
+		this.otherPlayers = [];
 		this.setupRenderer();
 		this.setupCamera();
 		this.setupLights();
 		this.setupFloor();
-
-		this.otherPlayers = [];
-		this.socket = io.connect();
+		this.setupSocket();
 		this.player = new Player(this.socket, this.scene, this.camera);
-
-		this.socket.on('create player', data => {
-			const player = new Box(this.scene, data.state);
-			player.index = data.index;
-			this.otherPlayers.push(player);
-		});
-		this.socket.on('update player', data => {
-			this.otherPlayers.forEach(player => {
-				if(player.index === data.index) {
-					player.update(data.state);
-				}
-			});
-		});
-
-		this.socket.on('remove player', index => {
-			const i = this.otherPlayers.findIndex(player => player.index === index);
-			this.scene.remove(this.otherPlayers[i].mesh);
-			this.otherPlayers.splice(i, 1);
-		});
-
 		window.addEventListener('resize', () => this.resize(), false);
 	}
 
 	render() {
 		this.player.update();
 		this.renderer.render(this.scene, this.camera);
-		requestAnimationFrameDebounced(() => this.render());
+		requestAnimationFrame(() => this.render());
 	}
 
 	setupRenderer() {
@@ -96,13 +61,44 @@ export default class Application {
 
 	setupFloor() {
 		const geometry = new THREE.PlaneGeometry(500, 500, 32);
-		const material = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide, wireframe: true });
+		const texture = new THREE.TextureLoader().load('textures/floor-1.png');
+		texture.wrapS = THREE.RepeatWrapping;
+		texture.wrapT = THREE.RepeatWrapping;
+		texture.repeat.set( 4, 4 );
+		const material = new THREE.MeshBasicMaterial({
+			map: texture,
+			side: THREE.DoubleSide
+		});
 		this.floor = new THREE.Mesh(geometry, material);
 		this.floor.rotation.x = Math.PI / 2;
 		this.floor.position.x = -50;
 		this.floor.position.z = -50;
 		this.floor.position.y = 0;
 		this.scene.add(this.floor);
+	}
+
+	setupSocket() {
+		this.socket = io.connect();
+
+		this.socket.on('create player', data => {
+			const player = new Box(this.scene, data.state);
+			player.index = data.index;
+			this.otherPlayers.push(player);
+		});
+
+		this.socket.on('update player', data => {
+			this.otherPlayers.forEach(player => {
+				if(player.index === data.index) {
+					player.update(data.state);
+				}
+			});
+		});
+
+		this.socket.on('remove player', index => {
+			const i = this.otherPlayers.findIndex(player => player.index === index);
+			this.scene.remove(this.otherPlayers[i].mesh);
+			this.otherPlayers.splice(i, 1);
+		});
 	}
 
 }

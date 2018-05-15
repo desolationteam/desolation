@@ -7,7 +7,7 @@
 		"check": "nsp check",
 		"start": "nodemon server.js",
 		"startDevServer": "webpack-dev-server --open --config webpack.config.js",
-		"build": "webpack --mode production --config webpack.config.js --watch"
+		"build": "webpack --mode production --config webpack.config.js"
 	},
 	"repository": {
 		"type": "git",
@@ -28,10 +28,8 @@
 		"babel-loader": "^7.1.4",
 		"babel-preset-env": "^1.6.1",
 		"clean-webpack-plugin": "^0.1.19",
-		"compression": "^1.7.2",
 		"css-loader": "^0.28.11",
 		"eslint": "^4.19.1",
-		"express": "^4.16.3",
 		"file-loader": "^1.1.11",
 		"html-loader": "^0.5.5",
 		"html-webpack-plugin": "^3.1.0",
@@ -41,19 +39,20 @@
 		"nsp": "^3.2.1",
 		"raw-loader": "^0.5.1",
 		"sass-loader": "^6.0.7",
-		"socket.io": "^2.1.0",
 		"style-loader": "^0.20.3",
 		"uglifyjs-webpack-plugin": "^1.2.4",
 		"webpack": "^4.4.1",
 		"webpack-bundle-analyzer": "^2.11.3",
 		"webpack-cli": "^2.0.13",
-		"webpack-dev-server": "^3.1.1"
+		"webpack-dev-server": "^3.1.1",
+		"hard-source-webpack-plugin": "^0.6.7",
 	},
 	"dependencies": {
-		"hard-source-webpack-plugin": "^0.6.7",
 		"normalize.css": "^8.0.0",
 		"socket.io-client": "^2.1.0",
+		"socket.io": "^2.1.0",
 		"three": "^0.91.0",
-		"three-fbx-loader": "^1.0.3"
+		"express": "^4.16.3",
+		"compression": "^1.7.2"
 	}
 }

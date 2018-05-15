@@ -29,28 +29,30 @@ export default function (camera) {
 
 	this.getObject = () => yawObject;
 
-	this.moveForward = false;
-	this.moveBackward = false;
-	this.moveLeft = false;
-	this.moveRight = false;
+	this.movement = {
+		forward : false,
+		backward : false,
+		left : false,
+		rght : false
+	};
 
 	const onKeyDown = event => {
 		switch (event.keyCode) {
 			case 38: // up
 			case 87: // w
-				this.moveForward = true;
+				this.movement.forward = true;
 				break;
 			case 37: // left
 			case 65: // a
-				this.moveLeft = true;
+				this.movement.left = true;
 				break;
 			case 40: // down
 			case 83: // s
-				this.moveBackward = true;
+				this.movement.backward = true;
 				break;
 			case 39: // right
 			case 68: // d
-				this.moveRight = true;
+				this.movement.right = true;
 				break;
 		}
 	};
@@ -59,19 +61,19 @@ export default function (camera) {
 		switch (event.keyCode) {
 			case 38: // up
 			case 87: // w
-				this.moveForward = false;
+				this.movement.forward = false;
 				break;
 			case 37: // left
 			case 65: // a
-				this.moveLeft = false;
+				this.movement.left = false;
 				break;
 			case 40: // down
 			case 83: // s
-				this.moveBackward = false;
+				this.movement.backward = false;
 				break;
 			case 39: // right
 			case 68: // d
-				this.moveRight = false;
+				this.movement.right = false;
 				break;
 		}
 	};

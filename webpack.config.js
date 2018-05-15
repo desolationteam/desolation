@@ -62,10 +62,10 @@ module.exports = {
 				]
 			},
 			{
-				test: /\.(png|svg|jpg|gif)$/,
-				use: [
-					'file-loader'
-				]
+				test: /\.(png|jp(e*)g|svg|gif)$/,
+				use: [{
+					loader: 'file-loader?name=/textures/[name].[ext]'
+				}]
 			}
 		]
 	},
