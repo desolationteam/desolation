@@ -20,19 +20,20 @@ export default class Application {
 
 		this.otherPlayers = [];
 		this.socket = io.connect();
-		this.socket.on('create player', (data) => {
+		this.player = new Player(this.socket, this.scene, this.camera);
+
+		this.socket.on('create player', data => {
 			const player = new Box(this.scene, data.state);
 			player.index = data.index;
 			this.otherPlayers.push(player);
 		});
-		this.socket.on('update player', (data) => {
+		this.socket.on('update player', data => {
 			this.otherPlayers.forEach(player => {
 				if(player.index === data.index) {
 					player.update(data.state);
 				}
 			});
 		});
-		this.player = new Player(this.socket, this.scene, this.camera);
 
 		window.addEventListener('resize', () => this.resize(), false);
 	}

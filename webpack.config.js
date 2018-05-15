@@ -4,6 +4,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+
 
 module.exports = {
 	entry: {
@@ -69,6 +72,7 @@ module.exports = {
 	},
 	plugins: [
 		new CleanWebpackPlugin(['dist']),
+		// new BundleAnalyzerPlugin(),
 		new HtmlWebpackPlugin({
 			template: './src/index.html',
 			filename: './index.html'
@@ -81,7 +85,8 @@ module.exports = {
 		}),
 		new webpack.DefinePlugin({
 			'process.env.NODE_ENV': JSON.stringify('production')
-		})
+		}),
+		new HardSourceWebpackPlugin()
 	],
 	devtool: 'source-map',
 	devServer: {

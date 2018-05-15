@@ -1,8 +1,10 @@
 const THREE = require('three');
 
 const express = require('express');
+const compression = require('compression');
 const app = express();
 app.use(express.static('dist'));
+app.use(compression());
 const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
 
@@ -17,6 +19,7 @@ io.on('connection', socket => {
 	socket.index = playersCount;
 	connections.push(socket);
 	setListeners(socket);
+	console.log(connections.length);
 });
 
 function setListeners(socket) {
@@ -25,20 +28,21 @@ function setListeners(socket) {
 	});
 
 	socket.on('current position', data => {
-		socket.playerData = data;
+		socket.playerData = Object.assign({}, data, socket.playerData);
 		const filtered = connections.filter(connection => connection.index !== socket.index);
-		const playersData = filtered.map(player => ({ state: player.playerData, index: player.index }));
-		playersData.forEach(data => socket.emit('update player', data));
+		filtered.forEach(socket => socket.emit('update player', socket.playerData));
 	});
 
 	socket.on('new player', data => {
-		socket.playerData = data;
+		socket.playerData = Object.assign({}, data, {index: socket.index});
 		const filtered = connections.filter(connection => connection.index !== socket.index);
 		filtered.forEach(connection => {
-			connection.emit('create player', { state: data, index: connection.index });
+			console.log(socket.playerData);
+			connection.emit('create player', socket.playerData);
 		});
 		const playersData = filtered.map(player => player.playerData);
-		playersData.forEach(data => socket.emit('create player', data));
+
+		playersData.forEach(data => {socket.emit('create player', data);});
 	});
 
 	socket.on('move forward', () => {

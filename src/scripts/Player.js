@@ -13,8 +13,9 @@ export default class Player {
 
 		this.socket = socket;
 		this.socket.emit('new player', {
-			position: this.controls.getObject().position,
-			rotation: this.controls.getObject().rotation
+			state: {
+				position: this.controls.getObject().position
+			}
 		});
 
 		this.socket.on('update position', velocity => {
@@ -36,8 +37,10 @@ export default class Player {
 			}
 
 			this.socket.emit('current position', {
-				position: this.controls.getObject().position,
-				rotation: this.controls.getObject().rotation
+				state:{
+					position: this.controls.getObject().position,
+					rotation: this.controls.getObject().rotation
+				}
 			});
 		});
 	}
