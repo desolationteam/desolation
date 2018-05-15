@@ -1,14 +1,13 @@
 const path = require('path');
 const express = require('express');
 const compression = require('compression');
-const server = require('http');
+const server = require('http').createServer(app);
 const socketIO = require('socket.io');
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use(compression());
 
-server.createServer(app);
 const io = socketIO(server);
 server.listen(process.env.PORT || 5000);
 
