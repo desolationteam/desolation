@@ -1,0 +1,12 @@
+import './ratamahatta.md2';
+import './w_bfg.md2';
+import './w_blaster.md2';
+import './w_chaingun.md2';
+import './w_glauncher.md2';
+import './w_hyperblaster.md2';
+import './w_machinegun.md2';
+import './w_railgun.md2';
+import './w_rlauncher.md2';
+import './w_shotgun.md2';
+import './w_sshotgun.md2';
+import './weapon.md2';

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import MD2Loader from './CharacterLoader';
 
 const MD2Character = function () {
 
@@ -33,14 +34,14 @@ const MD2Character = function () {
 		for ( let i = 0; i < config.weapons.length; i ++ ) weaponsTextures[ i ] = config.weapons[ i ][ 1 ];
 		// SKINS
 
-		this.skinsBody = loadTextures( config.baseUrl + 'skins/', config.skins );
-		this.skinsWeapon = loadTextures( config.baseUrl + 'skins/', weaponsTextures );
+		this.skinsBody = loadTextures( './textures/', config.skins );
+		this.skinsWeapon = loadTextures('./textures/', weaponsTextures );
 
 		// BODY
 
-		let loader = new THREE.MD2Loader();
+		let loader = new MD2Loader();
 
-		loader.load( config.baseUrl + config.body, function( geo ) {
+		loader.load('./models/' + config.body, function( geo ) {
 
 			geo.computeBoundingBox();
 
@@ -86,7 +87,7 @@ const MD2Character = function () {
 
 		for ( let i = 0; i < config.weapons.length; i ++ ) {
 
-			loader.load( config.baseUrl + config.weapons[ i ][ 0 ], generateCallback( i, config.weapons[ i ][ 0 ] ) );
+			loader.load('./models/' + config.weapons[ i ][ 0 ], generateCallback( i, config.weapons[ i ][ 0 ] ) );
 
 		}
 

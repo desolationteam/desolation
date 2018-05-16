@@ -66,6 +66,12 @@ module.exports = {
 				use: [{
 					loader: 'file-loader?name=/textures/[name].[ext]'
 				}]
+			},
+			{
+				test: /\.md2$/,
+				use: [{
+					loader: 'file-loader?name=/models/[name].[ext]'
+				}]
 			}
 		]
 	},
