@@ -84,7 +84,6 @@ export default class Controls{
 	}
 
 	initPointerLockControls() {
-		const PI_2 = Math.PI / 2;
 		const havePointerLock = 'pointerLockElement' in document ||
 			'mozPointerLockElement' in document ||
 			'webkitPointerLockElement' in document;
@@ -92,10 +91,7 @@ export default class Controls{
 			const element = document.body;
 			const onMouseMove = event => {
 				const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-				const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 				this.mesh.rotation.y -= movementX * 0.002;
-				this.pitchObject.rotation.x += movementY * 0.002;
-				this.pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, this.pitchObject.rotation.x));
 			};
 			const pointerlockchange = event => {
 				if (document.pointerLockElement === element ||
