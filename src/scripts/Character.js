@@ -22,11 +22,14 @@ const MD2Character = function () {
 
 	this.mixer = null;
 
-	this.onLoadComplete = function () {};
+	this.onLoadComplete = function () {
+		this.callback();
+	};
 
 	this.loadCounter = 0;
 
-	this.loadParts = function ( config ) {
+	this.loadParts = function ( config, callback ) {
+		this.callback = callback;
 
 		this.loadCounter = config.weapons.length * 2 + config.skins.length + 1;
 
@@ -65,7 +68,6 @@ const MD2Character = function () {
 		// WEAPONS
 
 		let generateCallback = function ( index, name ) {
-
 			return function( geo ) {
 
 				let mesh = createPart( geo, scope.skinsWeapon[ index ] );
@@ -80,17 +82,12 @@ const MD2Character = function () {
 				scope.meshWeapon = mesh;
 
 				checkLoadingComplete();
-
 			};
-
 		};
 
 		for ( let i = 0; i < config.weapons.length; i ++ ) {
-
 			loader.load('./models/' + config.weapons[ i ][ 0 ], generateCallback( i, config.weapons[ i ][ 0 ] ) );
-
 		}
-
 	};
 
 	this.setPlaybackRate = function ( rate ) {

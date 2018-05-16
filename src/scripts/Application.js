@@ -29,6 +29,7 @@ export default class Application {
 	render() {
 		const delta = this.clock.getDelta();
 		this.player.update(delta);
+		this.player.character.update(delta);
 		this.renderer.render(this.scene, this.camera);
 		requestAnimationFrame(() => this.render());
 	}
