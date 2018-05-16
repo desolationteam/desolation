@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import io from 'socket.io-client';
 
-import Box from './Box';
+import Enemy from './Enemy';
 import Player from './Player';
 
 export default class Application {
@@ -73,7 +73,7 @@ export default class Application {
 		this.socket = io.connect();
 
 		this.socket.on('create player', data => {
-			const player = new Box(this.scene, data.state);
+			const player = new Enemy(this.scene, data.state);
 			player.index = data.index;
 			this.otherPlayers.push(player);
 		});
@@ -88,7 +88,7 @@ export default class Application {
 
 		this.socket.on('remove player', index => {
 			const i = this.otherPlayers.findIndex(player => player.index === index);
-			this.scene.remove(this.otherPlayers[i].mesh);
+			this.scene.remove(this.otherPlayers[i].character.root);
 			this.otherPlayers.splice(i, 1);
 		});
 	}
