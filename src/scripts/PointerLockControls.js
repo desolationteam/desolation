@@ -33,7 +33,7 @@ export default function (camera) {
 		forward : false,
 		backward : false,
 		left : false,
-		rght : false
+		right : false
 	};
 
 	const onKeyDown = event => {
