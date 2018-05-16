@@ -12,10 +12,10 @@ export default class Player {
 		this.character.scale = 0.4;
 		this.character.loadParts(config, () => {
 			this.character.setSkin(1);
-			// this.character.setAnimation(this.character.meshBody.geometry.animations[1].name);
 			this.character.setWeapon(0);
 		});
 		this.character.root.add(camera);
+		this.isAnimated = false;
 		camera.position.set(0, 8, -20);
 		camera.rotation.y = Math.PI;
 		this.controls = new Controls(this.character.root);
@@ -87,6 +87,10 @@ export default class Player {
 				movement.jump = false;
 			}
 		}
+		if (!this.isAnimated && !!this.character.meshBody && !!this.character.meshBody.geometry) {
+			this.character.setAnimation(this.character.meshBody.geometry.animations[1].name);
+			this.isAnimated = true;
+		}
 		this.controls.mesh.translateX(velocity.x);
 		this.controls.mesh.translateY(velocity.y);
 		this.controls.mesh.translateZ(velocity.z);
@@ -103,6 +107,9 @@ export default class Player {
 					position: newPosition
 				}
 			});
+		} else if (this.isAnimated && !!this.character.meshBody && !!this.character.meshBody.geometry) {
+			this.isAnimated = false;
+			this.character.setAnimation(this.character.meshBody.geometry.animations[0].name);
 		}
 	}
 }
