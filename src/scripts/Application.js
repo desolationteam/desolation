@@ -8,6 +8,7 @@ export default class Application {
 	constructor(nickname) {
 		this.nickname = nickname;
 		this.init(nickname);
+		this.clock = new THREE.Clock();
 		this.render();
 	}
 
@@ -26,7 +27,8 @@ export default class Application {
 	}
 
 	render() {
-		this.player.update();
+		const delta = this.clock.getDelta();
+		this.player.update(delta);
 		this.renderer.render(this.scene, this.camera);
 		requestAnimationFrame(() => this.render());
 	}
