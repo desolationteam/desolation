@@ -63,11 +63,13 @@ export default class Player {
 	}
 
 	updateMotion(delta) {
+		const oldPosition = Object.assign({}, this.controls.mesh.position);
 		const velocity = new THREE.Vector3();
-		let movement = this.controls.movement;
 		velocity.y -= 9.8 * 100.0 * delta;
 		velocity.x -= velocity.x * 10.0 * delta;
 		velocity.z -= velocity.z * 10.0 * delta;
+
+		let movement = this.controls.movement;
 		if (this.controls.controlsEnabled) {
 			if (movement.forward) {
 				velocity.z += 400 * delta;
@@ -95,12 +97,13 @@ export default class Player {
 			this.controls.mesh.position.y = 10;
 			this.controls.canJump = true;
 		}
-
-		this.socket.emit('move', {
-			state: {
-				position: this.controls.mesh.position,
-				rotation: {}
-			}
-		});
+		const newPosition = Object.assign({}, this.controls.mesh.position);
+		if (JSON.stringify(oldPosition) !== JSON.stringify(newPosition)) {
+			this.socket.emit('move', {
+				state: {
+					position: newPosition
+				}
+			});
+		}
 	}
 }

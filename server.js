@@ -35,12 +35,12 @@ function setListeners(socket) {
 		const filtered = connections.filter(connection => connection.index !== socket.index);
 		filtered.forEach(connection => connection.emit('update player', socket.playerData));
 	});
+
 	socket.on('send message', data => {
 		connections.forEach(connection => {
 			connection.emit('receive message', data);
 		});
 	});
-
 
 	socket.on('disconnect', () => {
 		connections.splice(connections.findIndex(connection => connection.index === socket.index), 1);
