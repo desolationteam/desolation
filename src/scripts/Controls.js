@@ -85,7 +85,7 @@ export default class Controls{
 				const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 				const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 				this.mesh.rotation.y -= movementX * 0.002;
-				this.pitchObject.rotation.x -= movementY * 0.002;
+				this.pitchObject.rotation.x += movementY * 0.002;
 				this.pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, this.pitchObject.rotation.x));
 			};
 			const pointerlockchange = event => {
