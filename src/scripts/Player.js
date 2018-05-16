@@ -65,46 +65,37 @@ export default class Player {
 	updateMotion(delta) {
 		const velocity = new THREE.Vector3();
 		let movement = this.controls.movement;
+		velocity.y -= 9.8 * 100.0 * delta;
+		velocity.x -= velocity.x * 10.0 * delta;
+		velocity.z -= velocity.z * 10.0 * delta;
 		if (this.controls.controlsEnabled) {
-			if (movement.forward || movement.backward || movement.left || movement.right || movement.jump) {
-				if (movement.forward) {
-					velocity.z += 400 * delta;
-				}
-				if (movement.backward) {
-					velocity.z -= 400 * delta;
-				}
-				if (movement.left) {
-					velocity.x += 400 * delta;
-				}
-				if (movement.right) {
-					velocity.x -= 400 * delta;
-				}
-				if (movement.jump) {
-					velocity.y += 350;
-					movement.jump = false;
-				}
-				if (velocity.x) {
-					this.controls.mesh.translateX(velocity.x);
-				}
-				if (velocity.z) {
-					this.controls.mesh.translateZ(velocity.z);
-				}
-				this.socket.emit('move', {
-					state: {
-						position: this.controls.mesh.position,
-					}
-				});
+			if (movement.forward) {
+				velocity.z += 400 * delta;
+			}
+			if (movement.backward) {
+				velocity.z -= 400 * delta;
+			}
+			if (movement.left) {
+				velocity.x += 400 * delta;
+			}
+			if (movement.right) {
+				velocity.x -= 400 * delta;
+			}
+			if (movement.jump) {
+				velocity.y += 350;
+				movement.jump = false;
 			}
 		}
-		if (!velocity.y) {
-			velocity.y -= 9.8 * 100.0 * delta;
-		}
+		this.controls.mesh.translateX(velocity.x);
 		this.controls.mesh.translateY(velocity.y);
+		this.controls.mesh.translateZ(velocity.z);
+
 		if (this.controls.mesh.position.y < 10) {
 			velocity.y = 0;
 			this.controls.mesh.position.y = 10;
 			this.controls.canJump = true;
 		}
+
 		this.socket.emit('move', {
 			state: {
 				position: this.controls.mesh.position,
