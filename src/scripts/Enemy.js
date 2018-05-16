@@ -18,16 +18,12 @@ export default class Enemy {
 	}
 
 	update(data) {
-		if(data.position.y) {
+		if(data.position) {
 			this.character.root.position.y = data.position.y;
-		}
-		if(data.position.x) {
 			this.character.root.position.x = data.position.x;
-		}
-		if(data.position.z) {
 			this.character.root.position.z = data.position.z;
 		}
-		if (data.rotation.y) {
+		if (data.rotation) {
 			this.character.root.rotation.y = data.rotation.y;
 		}
 	}

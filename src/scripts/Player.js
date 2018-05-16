@@ -25,7 +25,6 @@ export default class Player {
 		this.socket.emit('new player', {
 			state: {
 				position: this.controls.mesh.position,
-				rotation: {},
 			}
 		});
 	}
@@ -44,24 +43,21 @@ export default class Player {
 	}
 
 	updateRotation() {
-		if (this.controls.controlsEnabled) {
-			if (!lastRotation) {
-				lastRotation = {};
-				lastRotation.y = this.controls.mesh.rotation.y;
+		if (this.controls.controlsEnabled && this.controls.isRotate) {
+			if(!lastRotation) {
+				lastRotation = this.controls.mesh.rotation.y;
 				return;
 			}
-			let currentRotation = {};
-			currentRotation.y = this.controls.mesh.rotation.y;
-			if(lastRotation._y !== currentRotation.y) {
+			const curRotation = this.controls.mesh.rotation.y;
+			if (lastRotation !== curRotation) {
 				this.socket.emit('move', {
 					state: {
-						position: {},
 						rotation: {
-							y: currentRotation.y,
+							y: this.controls.mesh.rotation.y,
 						}
 					}
 				});
-				lastRotation = currentRotation;
+				lastRotation = curRotation;
 			}
 		}
 	}
@@ -93,6 +89,11 @@ export default class Player {
 				if (velocity.z) {
 					this.controls.mesh.translateZ(velocity.z);
 				}
+				this.socket.emit('move', {
+					state: {
+						position: this.controls.mesh.position,
+					}
+				});
 			}
 		}
 		if (!velocity.y) {
@@ -104,7 +105,6 @@ export default class Player {
 			this.controls.mesh.position.y = 10;
 			this.controls.canJump = true;
 		}
-		movement.jump = false;
 		this.socket.emit('move', {
 			state: {
 				position: this.controls.mesh.position,
