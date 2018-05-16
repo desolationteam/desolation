@@ -100,14 +100,18 @@ export default class Controls{
 	}
 
 	initPointerLockControls() {
+		let timer;
 		const havePointerLock = 'pointerLockElement' in document ||
 			'mozPointerLockElement' in document ||
 			'webkitPointerLockElement' in document;
 		if (havePointerLock) {
 			const element = document.body;
 			const onMouseMove = event => {
+				clearTimeout(timer);
 				const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 				this.mesh.rotation.y -= movementX * 0.002;
+				this.isRotate = true;
+				timer = setTimeout(() => this.isRotate = false, 100);
 			};
 			const pointerlockchange = event => {
 				if (document.pointerLockElement === element ||
