@@ -62,11 +62,10 @@ export default class Player {
 	}
 
 	updateMotion() {
+		const velocity = new THREE.Vector3();
 		if (this.controls.controlsEnabled) {
 			let movement = this.controls.movement;
-
-			if (movement.forward || movement.backward || movement.left || movement.right) {
-				const velocity = new THREE.Vector3();
+			if (movement.forward || movement.backward || movement.left || movement.right || movement.jump) {
 				if (movement.forward) {
 					velocity.z += 1;
 				}
@@ -79,27 +78,32 @@ export default class Player {
 				if (movement.right) {
 					velocity.x -= 1;
 				}
+				if (movement.jump) {
+					velocity.y += 10;
+					movement.jump = false;
+				}
 				if (velocity.x) {
 					this.controls.mesh.translateX(velocity.x);
-				}
-				if (velocity.y) {
-					this.controls.mesh.translateY(velocity.y);
 				}
 				if (velocity.z) {
 					this.controls.mesh.translateZ(velocity.z);
 				}
-				if (this.controls.mesh.position.y < 10) {
-					velocity.y = 0;
-					this.controls.mesh.position.y = 10;
-				}
-
-				this.socket.emit('move', {
-					state: {
-						position: this.controls.mesh.position,
-						rotation: {}
-					}
-				});
 			}
 		}
+		if (!velocity.y) {
+			velocity.y -= 1;
+		}
+		this.controls.mesh.translateY(velocity.y);
+		if (this.controls.mesh.position.y < 10) {
+			velocity.y = 0;
+			this.controls.mesh.position.y = 10;
+			this.controls.canJump = true;
+		}
+		this.socket.emit('move', {
+			state: {
+				position: this.controls.mesh.position,
+				rotation: {}
+			}
+		});
 	}
 }

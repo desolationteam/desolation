@@ -48,6 +48,10 @@ export default class Controls{
 				case 68: // d
 					this.movement.right = true;
 					break;
+				case 32: // space
+					if (this.canJump === true) this.movement.jump = true;
+					this.canJump = false;
+					break;
 			}
 		};
 		const onKeyUp = event => {
@@ -70,8 +74,13 @@ export default class Controls{
 					break;
 			}
 		};
+		// const onKeyPress = event => {
+		// 	// switch (event.keyCode) {
+		// 	// }
+		// };
 		document.addEventListener('keydown', onKeyDown, false);
 		document.addEventListener('keyup', onKeyUp, false);
+		// document.addEventListener('keypress', onKeyPress, false);
 	}
 
 	initPointerLockControls() {
