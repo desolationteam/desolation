@@ -1,7 +1,10 @@
 {
 	"name": "desolation",
 	"version": "0.0.0",
-	"description": "The game.",
+	"description": "Multiplayer game",
+	"engines": {
+		"node": "8.9.1"
+	},
 	"main": "index.js",
 	"scripts": {
 		"check": "nsp check",
@@ -14,7 +17,12 @@
 		"url": "git+https://github.com/desolationteam/desolation.git"
 	},
 	"keywords": [
-		"game"
+		"game",
+		"node",
+		"express",
+		"multiplayer",
+		"three.js",
+		"socket.io"
 	],
 	"author": "Desolation Team",
 	"license": "ISC",
@@ -45,7 +53,7 @@
 		"webpack-bundle-analyzer": "^2.11.3",
 		"webpack-cli": "^2.0.13",
 		"webpack-dev-server": "^3.1.1",
-		"hard-source-webpack-plugin": "^0.6.7",
+		"hard-source-webpack-plugin": "^0.6.7"
 	},
 	"dependencies": {
 		"normalize.css": "^8.0.0",
