@@ -97,7 +97,7 @@ export default class Player {
 			this.controls.canJump = true;
 		}
 		const newPosition = Object.assign({}, this.controls.mesh.position);
-		if (JSON.stringify(oldPosition) !== JSON.stringify(newPosition)) {
+		if (oldPosition.x !== newPosition.x || oldPosition.y !== newPosition.y || oldPosition.z !== newPosition.z) {
 			this.socket.emit('move', {
 				state: {
 					position: newPosition
