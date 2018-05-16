@@ -25,7 +25,7 @@ export default class Player {
 		this.socket.emit('new player', {
 			state: {
 				position: this.controls.mesh.position,
-				rotation: this.controls.mesh.rotation
+				rotation: {},
 			}
 		});
 	}
@@ -40,18 +40,15 @@ export default class Player {
 			if (!lastRotation) {
 				lastRotation = {};
 				lastRotation.y = this.controls.mesh.rotation.y;
-				lastRotation.x = this.controls.pitchObject.rotation.x;
 				return;
 			}
 			let currentRotation = {};
 			currentRotation.y = this.controls.mesh.rotation.y;
-			currentRotation.x = this.controls.pitchObject.rotation.x;
-			if(lastRotation.x !== currentRotation.x || lastRotation._y !== currentRotation.y) {
+			if(lastRotation._y !== currentRotation.y) {
 				this.socket.emit('move', {
 					state: {
-						position: this.controls.mesh.position,
+						position: {},
 						rotation: {
-							x: currentRotation.x,
 							y: currentRotation.y,
 						}
 					}

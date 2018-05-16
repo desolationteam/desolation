@@ -14,30 +14,21 @@ export default class Enemy {
 		this.character.root.position.y = data.position.y;
 		this.character.root.position.x = data.position.x;
 		this.character.root.position.z = data.position.z;
-		if (data.rotation.y) {
-			this.character.root.rotation.y = data.rotation.y;
-		}
-		if (data.rotation.x) {
-			this.character.root.rotation.x = data.rotation.x;
-		}
-		if (data.rotation.z) {
-			this.character.root.rotation.z = data.rotation.z;
-		}
 		scene.add(this.character.root);
 	}
 
 	update(data) {
-		this.character.root.position.y = data.position.y;
-		this.character.root.position.x = data.position.x;
-		this.character.root.position.z = data.position.z;
+		if(data.position.y) {
+			this.character.root.position.y = data.position.y;
+		}
+		if(data.position.x) {
+			this.character.root.position.x = data.position.x;
+		}
+		if(data.position.z) {
+			this.character.root.position.z = data.position.z;
+		}
 		if (data.rotation.y) {
 			this.character.root.rotation.y = data.rotation.y;
-		}
-		if (data.rotation.x) {
-			this.character.root.rotation.x = -data.rotation.x;
-		}
-		if (data.rotation.z) {
-			this.character.root.rotation.z = -data.rotation.z;
 		}
 	}
 }
