@@ -343,5 +343,21 @@ template {
 canvas {
   display: block; }
 
+.hide {
+  display: none !important; }
 
-/*# sourceMappingURL=app.a6062f9659bc72fe5147.css.map*/
+#overlay {
+  font-size: 72px;
+  font-weight: 900;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: beige;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; }
+
+
+/*# sourceMappingURL=app.css.map*/

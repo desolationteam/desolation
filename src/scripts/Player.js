@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import PointerLockControls from './PointerLockControls';
+import Controls from './Controls';
 import MD2Character from './Character';
 
 let config = {
@@ -33,13 +33,12 @@ export default class Player {
 		this.kek.root.add(camera);
 		camera.position.set(0,8,-20);
 		camera.rotation.y = Math.PI;
-		this.controls = new PointerLockControls(this.kek.root);
-		this.controls.getObject().rotation.y = Math.PI;
-		scene.add(this.controls.getObject());
+		this.controls = new Controls(this.kek.root);
+		scene.add(this.controls.mesh);
 		this.socket = socket;
 		this.socket.emit('new player', {
 			state: {
-				position: this.controls.getObject().position
+				position: this.controls.mesh.position
 			}
 		});
 	}
@@ -49,44 +48,44 @@ export default class Player {
 	}
 
 	updateMotion() {
-		let movement = this.controls.movement;
+		if (this.controls.controlsEnabled) {
+			let movement = this.controls.movement;
 
-		if (movement.forward || movement.backward || movement.left || movement.right){
-			const velocity = new THREE.Vector3();
-
-			if (movement.forward) {
-				velocity.z += 1;
-			}
-			if (movement.backward) {
-				velocity.z -= 1;
-			}
-			if (movement.left){
-				velocity.x += 1;
-			}
-			if (movement.right){
-				velocity.x -= 1;
-			}
-
-			if (velocity.x) {
-				this.controls.getObject().translateX(velocity.x);
-			}
-			if (velocity.y) {
-				this.controls.getObject().translateY(velocity.y);
-			}
-			if (velocity.z) {
-				this.controls.getObject().translateZ(velocity.z);
-			}
-			if (this.controls.getObject().position.y < 10) {
-				velocity.y = 0;
-				this.controls.getObject().position.y = 10;
-			}
-
-			this.socket.emit('move', {
-				state:{
-					position: this.controls.getObject().position,
-					rotation: this.controls.getObject().rotation
+			if (movement.forward || movement.backward || movement.left || movement.right) {
+				const velocity = new THREE.Vector3();
+				if (movement.forward) {
+					velocity.z += 1;
 				}
-			});
+				if (movement.backward) {
+					velocity.z -= 1;
+				}
+				if (movement.left) {
+					velocity.x += 1;
+				}
+				if (movement.right) {
+					velocity.x -= 1;
+				}
+				if (velocity.x) {
+					this.controls.mesh.translateX(velocity.x);
+				}
+				if (velocity.y) {
+					this.controls.mesh.translateY(velocity.y);
+				}
+				if (velocity.z) {
+					this.controls.mesh.translateZ(velocity.z);
+				}
+				if (this.controls.mesh.position.y < 10) {
+					velocity.y = 0;
+					this.controls.mesh.position.y = 10;
+				}
+
+				this.socket.emit('move', {
+					state: {
+						position: this.controls.mesh.position,
+						rotation: this.controls.mesh.rotation
+					}
+				});
+			}
 		}
 	}
 }

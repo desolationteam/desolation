@@ -46,14 +46,6 @@ export default class Application {
 		this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 1000);
 	}
 
-	resize() {
-		this.width = window.innerWidth;
-		this.height = window.innerHeight;
-		this.camera.aspect = this.width / this.height;
-		this.camera.updateProjectionMatrix();
-		this.renderer.setSize(this.width, this.height);
-	}
-
 	setupLights() {
 		this.light = new THREE.AmbientLight(0xffffff, 1);
 		this.scene.add(this.light);
@@ -99,6 +91,14 @@ export default class Application {
 			this.scene.remove(this.otherPlayers[i].mesh);
 			this.otherPlayers.splice(i, 1);
 		});
+	}
+
+	resize() {
+		this.width = window.innerWidth;
+		this.height = window.innerHeight;
+		this.camera.aspect = this.width / this.height;
+		this.camera.updateProjectionMatrix();
+		this.renderer.setSize(this.width, this.height);
 	}
 
 }
