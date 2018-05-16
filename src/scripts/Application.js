@@ -5,8 +5,9 @@ import Enemy from './Enemy';
 import Player from './Player';
 
 export default class Application {
-	constructor() {
-		this.init();
+	constructor(nickname) {
+		this.nickname = nickname;
+		this.init(nickname);
 		this.render();
 	}
 
@@ -71,6 +72,7 @@ export default class Application {
 
 	setupSocket() {
 		this.socket = io.connect();
+		this.socket.nickname = this.nickname;
 
 		this.socket.on('create player', data => {
 			const player = new Enemy(this.scene, data.state);
@@ -90,6 +92,13 @@ export default class Application {
 			const i = this.otherPlayers.findIndex(player => player.index === index);
 			this.scene.remove(this.otherPlayers[i].character.root);
 			this.otherPlayers.splice(i, 1);
+		});
+
+		this.socket.on('receive message', data => {
+			const msg = document.createElement('p');
+			msg.innerHTML=data.nickname + ': ' + data.message;
+			document.getElementById('messages')
+				.appendChild(msg);
 		});
 	}
 

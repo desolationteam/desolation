@@ -4,4 +4,14 @@ import './styles/styles.scss';
 import './textures';
 import './models';
 
-window.app = new Application();
+const form = document.getElementById('form');
+const startButton = document.getElementById('start');
+const nicknameInput = document.getElementById('nickname');
+
+startButton.addEventListener('click', () => {
+	const nickname = nicknameInput.value;
+	if (nickname.length) {
+		form.classList = 'hide';
+		window.app = new Application(nickname);
+	}
+});

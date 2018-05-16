@@ -30,6 +30,8 @@ export default class Controls{
 			left : false,
 			right : false
 		};
+		this.sendChatMessage = false;
+		const element = document.body;
 		const onKeyDown = event => {
 			switch (event.keyCode) {
 				case 38: // up
@@ -74,13 +76,27 @@ export default class Controls{
 					break;
 			}
 		};
-		// const onKeyPress = event => {
-		// 	// switch (event.keyCode) {
-		// 	// }
-		// };
+		const onKeyPress = event => {
+			switch (event.keyCode) {
+				case 13: //enter
+					if (document.pointerLockElement === element ||
+						document.mozPointerLockElement === element ||
+						document.webkitPointerLockElement === element) {
+						this.controlsEnabled = !this.controlsEnabled;
+						if (!this.controlsEnabled) {
+							document.getElementById('chat').focus();
+						}
+						else {
+							this.sendChatMessage = true;
+							document.getElementById('chat').blur();
+						}
+					}
+					break;
+			}
+		};
 		document.addEventListener('keydown', onKeyDown, false);
 		document.addEventListener('keyup', onKeyUp, false);
-		// document.addEventListener('keypress', onKeyPress, false);
+		document.addEventListener('keypress', onKeyPress, false);
 	}
 
 	initPointerLockControls() {

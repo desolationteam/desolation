@@ -20,11 +20,6 @@ io.on('connection', socket => {
 });
 
 function setListeners(socket) {
-	socket.on('disconnect', () => {
-		connections.splice(connections.findIndex(connection => connection.index === socket.index), 1);
-		connections.forEach(connection => connection.emit('remove player', socket.index));
-	});
-
 	socket.on('new player', data => {
 		socket.playerData = Object.assign({}, data, {index: socket.index});
 		const filtered = connections.filter(connection => connection.index !== socket.index);
@@ -39,5 +34,16 @@ function setListeners(socket) {
 		socket.playerData = Object.assign({}, data, {index: socket.index});
 		const filtered = connections.filter(connection => connection.index !== socket.index);
 		filtered.forEach(connection => connection.emit('update player', socket.playerData));
+	});
+	socket.on('send message', data => {
+		connections.forEach(connection => {
+			connection.emit('receive message', data);
+		});
+	});
+
+
+	socket.on('disconnect', () => {
+		connections.splice(connections.findIndex(connection => connection.index === socket.index), 1);
+		connections.forEach(connection => connection.emit('remove player', socket.index));
 	});
 }

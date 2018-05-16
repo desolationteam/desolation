@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import Controls from './Controls';
 import MD2Character from './Character';
-import { config } from './Constants';
+import {config} from './Constants';
 
 let lastRotation;
 
@@ -17,7 +17,7 @@ export default class Player {
 			this.character.setWeapon(0);
 		});
 		this.character.root.add(camera);
-		camera.position.set(0,8,-20);
+		camera.position.set(0, 8, -20);
 		camera.rotation.y = Math.PI;
 		this.controls = new Controls(this.character.root);
 		scene.add(this.controls.mesh);
@@ -30,9 +30,17 @@ export default class Player {
 		});
 	}
 
-	update(){
+	update() {
 		this.updateMotion();
 		this.updateRotation();
+		if (this.controls.sendChatMessage) {
+			this.socket.emit('send message', {
+				message: document.getElementById('chat').value,
+				nickname: this.socket.nickname
+			});
+			document.getElementById('chat').value = '';
+			this.controls.sendChatMessage = false;
+		}
 	}
 
 	updateRotation() {
@@ -60,8 +68,8 @@ export default class Player {
 
 	updateMotion() {
 		const velocity = new THREE.Vector3();
+		let movement = this.controls.movement;
 		if (this.controls.controlsEnabled) {
-			let movement = this.controls.movement;
 			if (movement.forward || movement.backward || movement.left || movement.right || movement.jump) {
 				if (movement.forward) {
 					velocity.z += 1;
@@ -96,6 +104,7 @@ export default class Player {
 			this.controls.mesh.position.y = 10;
 			this.controls.canJump = true;
 		}
+		movement.jump = false;
 		this.socket.emit('move', {
 			state: {
 				position: this.controls.mesh.position,
