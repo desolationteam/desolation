@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 
 export default class Controls{
-	constructor(character, camera) {
+	constructor(character, camera, scene) {
 		this.camera = camera;
+		this.scene = scene;
 		character.rotation.set(0, 0, 0);
 		this.isFirstPersonMode = false;
 		this.isViewModeCanBeChanged = true;
@@ -109,10 +110,15 @@ export default class Controls{
 	}
 
 	shoot() {
-		// const ray = new THREE.Raycaster();
-		// ray.set(this.camera.getWorldPosition(), this.camera.getWorldDirection() );
-		// const intersects = ray.intersectObject(window.app.otherPlayers);
-		// console.log(intersects);
+		console.log('shoot');
+		const raycaster = new THREE.Raycaster();
+		const direction = new THREE.Vector3(0, 0, -1);
+		raycaster.setFromCamera( direction, this.camera );
+
+		const intersections = raycaster.intersectObjects(this.scene.children);
+		if ( intersections.length > 0 ) {
+			console.log(intersections);
+		}
 	}
 
 	toggleViewMode() {

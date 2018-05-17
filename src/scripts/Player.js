@@ -15,7 +15,7 @@ export default class Player {
 		this.isAnimated = false;
 		camera.position.set(-10, 12, -25);
 		camera.rotation.y = Math.PI;
-		this.controls = new Controls(this.character.root, camera);
+		this.controls = new Controls(this.character.root, camera, scene);
 		scene.add(this.controls.mesh);
 		this.socket = socket;
 		this.socket.emit('new player', {
