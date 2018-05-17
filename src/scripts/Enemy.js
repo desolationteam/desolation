@@ -1,6 +1,11 @@
 import * as THREE from 'three';
 import MD2Character from './Character';
 import { config } from './Constants';
+import * as THREE from 'three';
+
+const geometry = new THREE.BoxGeometry(10, 25, 10);
+const material = new THREE.MeshBasicMaterial({color: 0x0000ff, transparent: true, opacity: 0});
+const cube = new THREE.Mesh(geometry, material);
 
 const geometry = new THREE.BoxGeometry(10, 25, 10);
 const material = new THREE.MeshBasicMaterial({color: 0x0000ff, transparent: true, opacity: 0});

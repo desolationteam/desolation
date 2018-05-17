@@ -112,7 +112,7 @@ export default class Controls{
 		document.addEventListener('keypress', onKeyPress, false);
 	}
 
-	shoot() {
+	shootRay() {
 		console.log('shoot');
 		const raycaster = new THREE.Raycaster();
 		const direction = new THREE.Vector3(0, 0, -1);
@@ -159,11 +159,12 @@ export default class Controls{
 					document.webkitPointerLockElement === element) {
 					this.controlsEnabled = true;
 					document.addEventListener('mousemove', onMouseMove, false);
-					document.addEventListener('mousedown', this.shoot.bind(this), false);
+					document.addEventListener('mousedown', this.shootRay.bind(this), false);
 					document.getElementById('overlay').className = 'hide';
 				} else {
 					this.controlsEnabled = false;
 					document.removeEventListener('mousemove', onMouseMove, false);
+					document.removeEventListener('mousedown', this.shootRay.bind(this), false);
 					document.getElementById('overlay').className = '';
 				}
 			};
