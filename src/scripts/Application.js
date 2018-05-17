@@ -17,11 +17,12 @@ export default class Application {
 		this.height = window.innerHeight;
 		this.scene = new THREE.Scene();
 		this.otherPlayers = [];
-		this.setupRenderer();
-		this.setupCamera();
-		this.setupLights();
-		this.setupFloor();
-		this.setupSocket();
+		this.initRenderer();
+		this.initCamera();
+		this.initLights();
+		this.initFloor();
+		this.initSocket();
+		this.initUserInterface();
 		this.player = new Player(this.socket, this.scene, this.camera);
 		window.addEventListener('resize', () => this.resize(), false);
 	}
@@ -34,7 +35,7 @@ export default class Application {
 		requestAnimationFrame(() => this.render());
 	}
 
-	setupRenderer() {
+	initRenderer() {
 		this.renderer = new THREE.WebGLRenderer({
 			antialias: true,
 			alpha: true
@@ -43,19 +44,21 @@ export default class Application {
 		this.renderer.setSize(this.width, this.height);
 		this.renderer.shadowMap.enabled = true;
 		this.renderer.setSize(this.width, this.height);
-		document.body.appendChild(this.renderer.domElement);
+		const body = document.body;
+		body.innerHTML = '';
+		body.appendChild(this.renderer.domElement);
 	}
 
-	setupCamera() {
+	initCamera() {
 		this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 1000);
 	}
 
-	setupLights() {
+	initLights() {
 		this.light = new THREE.AmbientLight(0xffffff, 1);
 		this.scene.add(this.light);
 	}
 
-	setupFloor() {
+	initFloor() {
 		const geometry = new THREE.PlaneGeometry(500, 500, 32);
 		const texture = new THREE.TextureLoader().load('textures/floor-1.png');
 		texture.wrapS = THREE.RepeatWrapping;
@@ -73,13 +76,14 @@ export default class Application {
 		this.scene.add(this.floor);
 	}
 
-	setupSocket() {
+	initSocket() {
 		this.socket = io.connect();
 		this.socket.nickname = this.nickname;
 
 		this.socket.on('create player', data => {
 			const player = new Enemy(this.scene, data.state);
 			player.index = data.index;
+			player.nickname = data.nickname;
 			this.otherPlayers.push(player);
 		});
 
@@ -98,11 +102,65 @@ export default class Application {
 		});
 
 		this.socket.on('receive message', data => {
-			const msg = document.createElement('p');
-			msg.innerHTML=data.nickname + ': ' + data.message;
-			document.getElementById('messages')
-				.appendChild(msg);
+			const message = document.createElement('p');
+			message.setAttribute('class', 'chat__message');
+			const nickname = document.createElement('span');
+			nickname.setAttribute('class', 'chat__nickname');
+			const text = document.createElement('span');
+			if (data.type === 'message') {
+				nickname.innerHTML = data.nickname + ': ';
+				text.setAttribute('class', 'chat__text');
+				text.innerHTML = data.text;
+			}
+			else if (data.type === 'connect') {
+				nickname.innerHTML = data.nickname;
+				text.setAttribute('class', 'chat__server');
+				text.innerHTML = ' has joined the game';
+			}
+			else if (data.type === 'disconnect') {
+				nickname.innerHTML = data.nickname;
+				text.setAttribute('class', 'chat__server');
+				text.innerHTML = ' has left the game';
+			}
+			message.appendChild(nickname);
+			message.appendChild(text);
+			document.getElementById('messages').appendChild(message);
 		});
+
+		this.socket.on('receive connection message', data => {
+			const message = document.createElement('p');
+			message.setAttribute('class', 'chat__message');
+			const nickname = document.createElement('span');
+			nickname.setAttribute('class', 'chat__nickname');
+
+			document.getElementById('messages').appendChild(message);
+		});
+	}
+
+	initUserInterface() {
+		const body = document.body;
+
+		const chat = document.createElement('div');
+		chat.setAttribute('class', 'chat');
+
+		const chatMessages = document.createElement('div');
+		chatMessages.setAttribute('class', 'chat__messages');
+		chatMessages.setAttribute('id', 'messages');
+
+		const chatInput = document.createElement('input');
+		chatInput.setAttribute('class', 'chat__input');
+		chatInput.setAttribute('id', 'input');
+		chatInput.setAttribute('type', 'text');
+		chatInput.setAttribute('disabled', 'disabled');
+
+		chat.appendChild(chatMessages);
+		chat.appendChild(chatInput);
+		body.appendChild(chat);
+
+		const overlay = document.createElement('div');
+		overlay.setAttribute('id', 'overlay');
+		overlay.innerHTML = 'CLICK TO ENABLE CONTROLS';
+		body.appendChild(overlay);
 	}
 
 	resize() {

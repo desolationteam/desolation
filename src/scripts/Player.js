@@ -10,10 +10,7 @@ export default class Player {
 	constructor(socket, scene, camera) {
 		this.character = new MD2Character();
 		this.character.scale = 0.4;
-		this.character.loadParts(config, () => {
-			this.character.setSkin(1);
-			this.character.setWeapon(0);
-		});
+		this.character.loadParts(config);
 		this.character.root.add(camera);
 		this.isAnimated = false;
 		camera.position.set(0, 8, -20);
@@ -24,21 +21,15 @@ export default class Player {
 		this.socket.emit('new player', {
 			state: {
 				position: this.controls.mesh.position,
-			}
+			},
+			nickname: socket.nickname
 		});
 	}
 
 	update(delta) {
 		this.updateMotion(delta);
 		this.updateRotation();
-		if (this.controls.sendChatMessage) {
-			this.socket.emit('send message', {
-				message: document.getElementById('chat').value,
-				nickname: this.socket.nickname
-			});
-			document.getElementById('chat').value = '';
-			this.controls.sendChatMessage = false;
-		}
+		this.updateChat();
 	}
 
 	updateRotation() {
@@ -87,6 +78,7 @@ export default class Player {
 				movement.jump = false;
 			}
 		}
+		movement.jump = false;
 		if (!this.isAnimated && !!this.character.meshBody && !!this.character.meshBody.geometry) {
 			this.character.setAnimation(this.character.meshBody.geometry.animations[1].name);
 			this.isAnimated = true;
@@ -105,11 +97,26 @@ export default class Player {
 			this.socket.emit('move', {
 				state: {
 					position: newPosition
-				}
+				},
+				nickname: this.socket.nickname
 			});
 		} else if (this.isAnimated && !!this.character.meshBody && !!this.character.meshBody.geometry) {
 			this.isAnimated = false;
 			this.character.setAnimation(this.character.meshBody.geometry.animations[0].name);
+		}
+	}
+
+	updateChat() {
+		if (this.controls.sendChatMessage) {
+			const input = document.getElementById('input');
+			if (input.value.length) {
+				this.socket.emit('send message', {
+					text: input.value,
+					nickname: this.socket.nickname
+				});
+				input.value = '';
+				this.controls.sendChatMessage = false;
+			}
 		}
 	}
 }
