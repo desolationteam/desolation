@@ -1,10 +1,13 @@
 import * as THREE from 'three';
 
 export default class Controls{
-	constructor(camera) {
-		camera.rotation.set(0, 0, 0);
+	constructor(character, camera) {
+		this.camera = camera;
+		character.rotation.set(0, 0, 0);
+		this.isFirstPersonMode = false;
+		this.isViewModeCanBeChanged = true;
 		this.pitchObject = new THREE.Object3D();
-		this.pitchObject.add(camera);
+		this.pitchObject.add(character);
 		this.mesh = new THREE.Object3D();
 		this.mesh.position.y = 10;
 		this.mesh.add(this.pitchObject);
@@ -54,6 +57,9 @@ export default class Controls{
 					if (this.canJump === true) this.movement.jump = true;
 					this.canJump = false;
 					break;
+				case 86:
+					this.toggleViewMode();
+					break;
 			}
 		};
 		const onKeyUp = event => {
@@ -73,6 +79,9 @@ export default class Controls{
 				case 39: // right
 				case 68: // d
 					this.movement.right = false;
+					break;
+				case 86:
+					this.isViewModeCanBeChanged = true;
 					break;
 			}
 		};
@@ -99,6 +108,28 @@ export default class Controls{
 		document.addEventListener('keypress', onKeyPress, false);
 	}
 
+	shoot() {
+		// const ray = new THREE.Raycaster();
+		// ray.set(this.camera.getWorldPosition(), this.camera.getWorldDirection() );
+		// const intersects = ray.intersectObject(window.app.otherPlayers);
+		// console.log(intersects);
+	}
+
+	toggleViewMode() {
+		if (this.isViewModeCanBeChanged) {
+			if (!this.isFirstPersonMode) {
+				this.camera.position.set(3, 8, 0);
+				this.isFirstPersonMode = true;
+				this.disableRunAnimation = true;
+			} else {
+				this.camera.position.set(-10, 12, -25);
+				this.isFirstPersonMode = false;
+				this.disableRunAnimation = false;
+			}
+			this.isViewModeCanBeChanged = false;
+		}
+	}
+
 	initPointerLockControls() {
 		let timer;
 		const havePointerLock = 'pointerLockElement' in document ||
@@ -119,6 +150,7 @@ export default class Controls{
 					document.webkitPointerLockElement === element) {
 					this.controlsEnabled = true;
 					document.addEventListener('mousemove', onMouseMove, false);
+					document.addEventListener('mousedown', this.shoot.bind(this), false);
 					document.getElementById('overlay').className = 'hide';
 				} else {
 					this.controlsEnabled = false;

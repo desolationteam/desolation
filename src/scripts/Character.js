@@ -22,14 +22,11 @@ const MD2Character = function () {
 
 	this.mixer = null;
 
-	this.onLoadComplete = function () {
-		this.callback();
-	};
+	this.onLoadComplete = function () {};
 
 	this.loadCounter = 0;
 
-	this.loadParts = function ( config, callback ) {
-		this.callback = callback;
+	this.loadParts = function ( config) {
 
 		this.loadCounter = config.weapons.length * 2 + config.skins.length + 1;
 
