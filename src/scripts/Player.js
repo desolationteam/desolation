@@ -21,42 +21,15 @@ export default class Player {
 		this.socket.emit('new player', {
 			state: {
 				position: this.controls.mesh.position,
-			}
+			},
+			nickname: socket.nickname
 		});
 	}
 
 	update(delta) {
 		this.updateMotion(delta);
 		this.updateRotation();
-		if (this.controls.sendChatMessage) {
-			this.socket.emit('send message', {
-				message: document.getElementById('chat').value,
-				nickname: this.socket.nickname
-			});
-			document.getElementById('chat').value = '';
-			this.controls.sendChatMessage = false;
-		}
-	}
-
-	updateRotation() {
-		if (this.controls.controlsEnabled && this.controls.isRotate) {
-			if(!lastRotation) {
-				lastRotation = this.controls.mesh.rotation.y;
-				return;
-			}
-			const curRotation = this.controls.mesh.rotation.y;
-			if (lastRotation !== curRotation) {
-				this.socket.emit('move', {
-					state: {
-						position: this.controls.mesh.position,
-						rotation: {
-							y: this.controls.mesh.rotation.y,
-						}
-					}
-				});
-				lastRotation = curRotation;
-			}
-		}
+		this.updateChat();
 	}
 
 	updateMotion(delta) {
@@ -85,6 +58,7 @@ export default class Player {
 				movement.jump = false;
 			}
 		}
+		movement.jump = false;
 		if (this.controls.disableRunAnimation && !!this.character.meshBody) {
 			this.isAnimated = false;
 			if (this.character.meshBody.activeAction) {
@@ -119,6 +93,40 @@ export default class Player {
 		} else if (this.isAnimated && !this.controls.disableRunAnimation && !!this.character.meshBody && !!this.character.meshBody.geometry) {
 			this.isAnimated = false;
 			this.character.setAnimation(this.character.meshBody.geometry.animations[0].name);
+		}
+	}
+
+	updateRotation() {
+		if (this.controls.controlsEnabled && this.controls.isRotate) {
+			if(!lastRotation) {
+				lastRotation = this.controls.mesh.rotation.y;
+				return;
+			}
+			const curRotation = this.controls.mesh.rotation.y;
+			if (lastRotation !== curRotation) {
+				this.socket.emit('move', {
+					state: {
+						rotation: {
+							y: this.controls.mesh.rotation.y,
+						}
+					}
+				});
+				lastRotation = curRotation;
+			}
+		}
+	}
+
+	updateChat() {
+		if (this.controls.sendChatMessage) {
+			const input = document.getElementById('input');
+			if (input.value.length) {
+				this.socket.emit('send message', {
+					text: input.value,
+					nickname: this.socket.nickname
+				});
+				input.value = '';
+				this.controls.sendChatMessage = false;
+			}
 		}
 	}
 }

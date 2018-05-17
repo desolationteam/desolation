@@ -1,21 +1,134 @@
+* {
+	box-sizing: border-box;
+}
+
+html {
+	height: 100%;
+}
+
+body {
+	font-family: sans-serif;
+	height: 100%;
+}
+
 canvas {
 	display: block;
+}
+
+header {
+	background-color: black;
+	color: white;
+	text-align: center;
+	font-size: 2.4rem;
+	padding: 10px;
+}
+
+main {
+	background-color: #e6e6e6;
+	height: 100%;
+	padding: 20px;
+}
+
+#overlay {
+	font-size: 36px;
+	font-weight: 900;
+	position: absolute;
+	top:0;
+	text-align: center;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	color: white;
+	display: block;
+	padding-top: 200px;
+	z-index: 100;
 }
 
 .hide {
 	display: none !important;
 }
 
-#overlay {
-	font-size: 72px;
-	font-weight: 900;
+.chat {
 	position: absolute;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.85);
-	color: beige;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
+	z-index: 1;
+	height: 200px;
+	width: 300px;
+	background-color: rgba(0, 0, 0, 0.41);
+	bottom: 0;
+	right: 0;
+	overflow: hidden;
+
+	&__messages {
+		position: absolute;
+		bottom: 22px;
+		width: 100%;
+	}
+
+	&__message {
+		margin: 4px;
+	}
+
+	&__input {
+		position: absolute;
+		bottom: 0;
+		height: 22px;
+		width: 100%;
+		outline: none;
+		padding: 3px 0 3px 3px;
+		border: none;
+		border-top: 2px solid rgba(255, 255, 255, 0);
+		background-color: rgba(0, 0, 0, 0.41);
+		color: white;
+		outline: none;
+	}
+
+	&__nickname {
+		color: #ff4f39;
+	}
+
+	&__text {
+		color: white;
+	}
+
+	&__server {
+		color: #893bff;
+	}
+}
+
+.form {
+	max-width: 720px;
+	background-color: white;
+	margin: 30px auto;
+	color: black;
+	font-weight: bold;
+	font-size: 2rem;
+	padding: 5px;
+
+	&__label {
+		text-align: center;
+		display: block;
+		margin: 20px auto;
+	}
+
+	&__input {
+		border-radius: 10px;
+		border: solid;
+		padding: 6px;
+		display: block;
+		margin: 20px auto;
+	}
+
+	&__button {
+		display: block;
+		padding: 17px;
+		cursor: pointer;
+		border: solid;
+		border-radius: 10px;
+		margin: 20px auto;
+
+		&:hover {
+			background-color: black;
+			color: white;
+		}
+	}
 }

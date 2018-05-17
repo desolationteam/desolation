@@ -93,12 +93,15 @@ export default class Controls{
 						document.mozPointerLockElement === element ||
 						document.webkitPointerLockElement === element) {
 						this.controlsEnabled = !this.controlsEnabled;
+						const input = document.getElementById('input');
 						if (!this.controlsEnabled) {
-							document.getElementById('chat').focus();
+							input.removeAttribute('disabled');
+							input.focus();
 						}
 						else {
 							this.sendChatMessage = true;
-							document.getElementById('chat').blur();
+							input.blur();
+							input.setAttribute('disabled', 'disabled');
 						}
 					}
 					break;

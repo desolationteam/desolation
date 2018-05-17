@@ -25,9 +25,15 @@ function setListeners(socket) {
 		const filtered = connections.filter(connection => connection.index !== socket.index);
 		filtered.forEach(connection => {
 			connection.emit('create player', socket.playerData);
+			connection.emit('receive message', {
+				type: 'connect',
+				nickname: socket.playerData.nickname
+			});
 		});
-		const playersData = filtered.map(player => player.playerData);
-		playersData.forEach(data => {if (data) socket.emit('create player', data);});
+		const playersData = filtered.map(player => {
+			if (player.playerData) return player.playerData;
+		});
+		playersData.forEach(data => socket.emit('create player', data));
 	});
 
 	socket.on('move', data => {
@@ -38,12 +44,23 @@ function setListeners(socket) {
 
 	socket.on('send message', data => {
 		connections.forEach(connection => {
-			connection.emit('receive message', data);
+			connection.emit('receive message', {
+				type: 'message',
+				nickname: data.nickname,
+				text: data.text
+			});
 		});
 	});
 
 	socket.on('disconnect', () => {
+		const nickname = socket.playerData.nickname;
 		connections.splice(connections.findIndex(connection => connection.index === socket.index), 1);
-		connections.forEach(connection => connection.emit('remove player', socket.index));
+		connections.forEach(connection => {
+			connection.emit('remove player', socket.index);
+			connection.emit('receive message', {
+				type: 'disconnect',
+				nickname: nickname
+			});
+		});
 	});
 }
