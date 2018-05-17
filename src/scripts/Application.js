@@ -84,6 +84,7 @@ export default class Application {
 		this.socket.on('create player', data => {
 			const player = new Enemy(this.scene, data.state);
 			player.index = data.index;
+			player.nickname = data.nickname;
 			this.otherPlayers.push(player);
 		});
 

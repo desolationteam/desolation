@@ -53,14 +53,14 @@ function setListeners(socket) {
 	});
 
 	socket.on('disconnect', () => {
-		const nickname = socket.playerData.nickname;
-		connections.splice(connections.findIndex(connection => connection.index === socket.index), 1);
-		connections.forEach(connection => {
-			connection.emit('remove player', socket.index);
-			connection.emit('receive message', {
+		if (socket.playerData) {
+			const nickname = socket.playerData.nickname;
+			io.emit('receive message', {
 				type: 'disconnect',
 				nickname: nickname
 			});
-		});
+		}
+		connections.splice(connections.findIndex(connection => connection.index === socket.index), 1);
+		io.emit('remove player', socket.index);
 	});
 }

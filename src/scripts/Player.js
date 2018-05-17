@@ -88,7 +88,8 @@ export default class Player {
 			this.socket.emit('move', {
 				state: {
 					position: newPosition
-				}
+				},
+				nickname: this.socket.nickname
 			});
 		} else if (this.isAnimated && !this.controls.disableRunAnimation && !!this.character.meshBody && !!this.character.meshBody.geometry) {
 			this.isAnimated = false;
