@@ -48,6 +48,30 @@ main {
 	display: none !important;
 }
 
+.aim {
+	position: absolute;
+	bottom: 50%;
+	right: 50%;
+	height: 5px;
+	width: 5px;
+	background-color: #ff0000;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.healthBar {
+	position: absolute;
+	top: 25px;
+	right: 45px;
+	display: block;
+	border: 2px solid black;
+	height: 20px;
+}
+
+.health::-webkit-progress-value {
+	background: green;
+}
+
 .chat {
 	position: absolute;
 	z-index: 1;

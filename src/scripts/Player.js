@@ -12,10 +12,12 @@ export default class Player {
 		this.character.scale = 0.4;
 		this.character.loadParts(config);
 		this.character.root.add(camera);
+		this.isWeaponSet = false;
 		this.isAnimated = false;
-		camera.position.set(-10, 12, -25);
+		this.health = 100;
+		camera.position.set(-10, 5.5, -25);
 		camera.rotation.y = Math.PI;
-		this.controls = new Controls(this.character.root, camera, scene);
+		this.controls = new Controls(this.character.root, camera, scene, socket);
 		scene.add(this.controls.mesh);
 		this.socket = socket;
 		this.socket.emit('new player', {

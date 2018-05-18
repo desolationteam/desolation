@@ -22,8 +22,12 @@ export default class Application {
 		this.initLights();
 		this.initFloor();
 		this.initSocket();
+		this.initSounds();
 		this.initUserInterface();
 		this.player = new Player(this.socket, this.scene, this.camera);
+		setTimeout(() => {
+			this.player.character.setWeapon(0);
+		}, 500);
 		window.addEventListener('resize', () => this.resize(), false);
 	}
 
@@ -46,7 +50,7 @@ export default class Application {
 		this.renderer.shadowMap.enabled = true;
 		this.renderer.setSize(this.width, this.height);
 		const body = document.body;
-		body.innerHTML = '';
+		body.innerHTML = '<div class ="aim"></div><progress id="health" class="healthBar" max="100" value="100"></progress>';
 		body.appendChild(this.renderer.domElement);
 	}
 
@@ -77,14 +81,61 @@ export default class Application {
 		this.scene.add(this.floor);
 	}
 
+	initSounds() {
+		this.sounds = {};
+		this.announceSounds = [];
+		let listener = new THREE.AudioListener();
+		let loadingManager = new THREE.LoadingManager();
+		let audioLoader = new THREE.AudioLoader(loadingManager);
+		this.sounds.soundShoot = new THREE.Audio(listener);
+		this.sounds.soundGlobal = new THREE.Audio(listener);
+		this.sounds.soundAnnounce1 = new THREE.Audio(listener);
+		this.sounds.soundAnnounce2 = new THREE.Audio(listener);
+		this.sounds.soundAnnounce3 = new THREE.Audio(listener);
+		this.sounds.soundAnnounce4 = new THREE.Audio(listener);
+		audioLoader.load('sounds/outOfBattleSound.mp3', (buffer) => {
+			this.sounds.soundGlobal.setBuffer(buffer);
+			this.sounds.soundGlobal.setLoop(true);
+			this.sounds.soundGlobal.setVolume(0.2);
+			this.sounds.soundGlobal.play();
+		});
+		audioLoader.load('sounds/rocketShot.mp3', (buffer) => {
+			this.sounds.soundShoot.setBuffer(buffer);
+			this.sounds.soundShoot.setVolume(1);
+		});
+		audioLoader.load('sounds/humiliation.mp3', (buffer) => {
+			this.sounds.soundAnnounce1.setBuffer(buffer);
+			this.sounds.soundAnnounce1.setVolume(0.2);
+			this.announceSounds.push(this.sounds.soundAnnounce1);
+		});
+		audioLoader.load('sounds/excellent.mp3', (buffer) => {
+			this.sounds.soundAnnounce2.setBuffer(buffer);
+			this.sounds.soundAnnounce2.setVolume(0.2);
+			this.announceSounds.push(this.sounds.soundAnnounce2);
+		});
+		audioLoader.load('sounds/holyshit.mp3', (buffer) => {
+			this.sounds.soundAnnounce3.setBuffer(buffer);
+			this.sounds.soundAnnounce3.setVolume(0.2);
+			this.announceSounds.push(this.sounds.soundAnnounce3);
+		});
+		audioLoader.load('sounds/perfect.mp3', (buffer) => {
+			this.sounds.soundAnnounce4.setBuffer(buffer);
+			this.sounds.soundAnnounce4.setVolume(0.2);
+			this.announceSounds.push(this.sounds.soundAnnounce4);
+		});
+	}
+
 	initSocket() {
 		this.socket = io.connect();
 		this.socket.nickname = this.nickname;
 
 		this.socket.on('create player', data => {
-			const player = new Enemy(this.scene, data.state);
+			const player = new Enemy(this.scene, data.state, data.nickname);
 			player.index = data.index;
 			player.nickname = data.nickname;
+			setTimeout(() => {
+				player.character.setWeapon(0);
+			}, 500);
 			this.otherPlayers.push(player);
 		});
 
@@ -94,6 +145,41 @@ export default class Application {
 					player.update(data.state);
 				}
 			});
+		});
+
+		this.socket.on('hit player', data => {
+			if (this.socket.nickname !== data.enemyName) {
+				const i = this.otherPlayers.findIndex(player => player.nickname === data.enemyName);
+				this.otherPlayers[i].hitBox.health -= data.damage;
+			} else {
+				this.player.health -= data.damage;
+				document.getElementById('health').value = this.player.health;
+			}
+		});
+
+		this.socket.on('kill player', data => {
+			if (this.socket.nickname !== data.enemyName) {
+				const i = this.otherPlayers.findIndex(player => player.nickname === data.enemyName);
+				this.scene.remove(this.otherPlayers[i].character.root);
+				this.scene.remove(this.otherPlayers[i].hitBox);
+				setTimeout(() => {
+					this.otherPlayers[i].hitBox.health = 100;
+					this.scene.add(this.otherPlayers[i].character.root);
+					this.scene.add(this.otherPlayers[i].hitBox);
+				}, 5000);
+			} else {
+				this.scene.remove(this.player.controls.mesh);
+				this.player.controls.controlsEnabled = false;
+				document.getElementById('health').value = 0;
+				// todo: you can still move if you dead
+				setTimeout(() => {
+					this.player.health = 100;
+					this.player.controls.controlsEnabled = true;
+					this.scene.add(this.player.controls.mesh);
+					document.getElementById('health').value = this.player.health;
+				}, 5000);
+			}
+			this.announceSounds[Math.floor(Math.random() * 4)].play();
 		});
 
 		this.socket.on('remove player', index => {
@@ -118,6 +204,11 @@ export default class Application {
 				text.setAttribute('class', 'chat__server');
 				text.innerHTML = ' has joined the game';
 			}
+			else if (data.type === 'death') {
+				nickname.innerHTML = data.nickname;
+				text.setAttribute('class', 'chat__server');
+				text.innerHTML = ' has been killed by ' + data.killer;
+			}
 			else if (data.type === 'disconnect') {
 				nickname.innerHTML = data.nickname;
 				text.setAttribute('class', 'chat__server');
@@ -136,32 +227,6 @@ export default class Application {
 
 			document.getElementById('messages').appendChild(message);
 		});
-	}
-
-	initUserInterface() {
-		const body = document.body;
-
-		const chat = document.createElement('div');
-		chat.setAttribute('class', 'chat');
-
-		const chatMessages = document.createElement('div');
-		chatMessages.setAttribute('class', 'chat__messages');
-		chatMessages.setAttribute('id', 'messages');
-
-		const chatInput = document.createElement('input');
-		chatInput.setAttribute('class', 'chat__input');
-		chatInput.setAttribute('id', 'input');
-		chatInput.setAttribute('type', 'text');
-		chatInput.setAttribute('disabled', 'disabled');
-
-		chat.appendChild(chatMessages);
-		chat.appendChild(chatInput);
-		body.appendChild(chat);
-
-		const overlay = document.createElement('div');
-		overlay.setAttribute('id', 'overlay');
-		overlay.innerHTML = 'CLICK TO ENABLE CONTROLS';
-		body.appendChild(overlay);
 	}
 
 	initUserInterface() {

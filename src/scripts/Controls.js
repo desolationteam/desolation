@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 
 export default class Controls{
-	constructor(character, camera, scene) {
+	constructor(character, camera, scene, socket) {
 		this.camera = camera;
 		this.scene = scene;
+		this.socket = socket;
+		this.canShoot = true;
 		character.rotation.set(0, 0, 0);
 		this.isFirstPersonMode = false;
 		this.isViewModeCanBeChanged = true;
@@ -113,24 +115,48 @@ export default class Controls{
 	}
 
 	shoot() {
-		const raycaster = new THREE.Raycaster();
-		const direction = new THREE.Vector3(0, 0, -1);
-		raycaster.setFromCamera( direction, this.camera );
+		if (this.canShoot) {
+			window.app.sounds.soundShoot.play();
+			const raycaster = new THREE.Raycaster();
+			const direction = new THREE.Vector3(0, 0, -1);
+			raycaster.setFromCamera( direction, this.camera );
 
-		const intersections = raycaster.intersectObjects(this.scene.children);
-		if ( intersections.length > 0 ) {
-			console.log(intersections);
+			const intersections = raycaster.intersectObjects(this.scene.children);
+			if ( intersections.length > 0 && intersections[0].object.nickname) {
+				const enemyHitted = intersections[0].object;
+				enemyHitted.health -= 50;
+				if (enemyHitted.health <= 0) {
+					this.scene.remove(enemyHitted.player);
+					this.scene.remove(enemyHitted);
+					setTimeout(() => {
+						enemyHitted.health = 100;
+						this.scene.add(enemyHitted.player);
+						this.scene.add(enemyHitted);
+					}, 5000);
+					this.socket.emit('enemy death', {
+						enemyName: enemyHitted.nickname,
+						killer: this.socket.nickname,
+					});
+				} else {
+					this.socket.emit('enemy hitted', {
+						enemyName: enemyHitted.nickname,
+						damage: 50,
+					});
+				}
+			}
+			this.canShoot = false;
+			setTimeout(() => this.canShoot = true, 2000);
 		}
 	}
 
 	toggleViewMode() {
 		if (this.isViewModeCanBeChanged) {
 			if (!this.isFirstPersonMode) {
-				this.camera.position.set(3, 8, 0);
+				this.camera.position.set(3, 5.5, 0);
 				this.isFirstPersonMode = true;
 				this.disableRunAnimation = true;
 			} else {
-				this.camera.position.set(-10, 12, -25);
+				this.camera.position.set(-10, 5.5, -25);
 				this.isFirstPersonMode = false;
 				this.disableRunAnimation = false;
 			}

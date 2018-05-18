@@ -36,6 +36,25 @@ function setListeners(socket) {
 		playersData.forEach(data => socket.emit('create player', data));
 	});
 
+	socket.on('enemy hitted', data => {
+		const filtered = connections.filter(connection => connection.index !== socket.index);
+		filtered.forEach(connection => {
+			connection.emit('hit player', data);
+		});
+	});
+
+	socket.on('enemy death', data => {
+		const filtered = connections.filter(connection => connection.index !== socket.index);
+		filtered.forEach(connection => {
+			connection.emit('kill player', data);
+		});
+		io.emit('receive message', {
+			type: 'death',
+			nickname: data.enemyName,
+			killer: data.killer,
+		});
+	});
+
 	socket.on('move', data => {
 		socket.playerData = Object.assign({}, data, {index: socket.index});
 		const filtered = connections.filter(connection => connection.index !== socket.index);

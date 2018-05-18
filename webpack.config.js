@@ -68,6 +68,12 @@ module.exports = {
 				}]
 			},
 			{
+				test: /\.(mp3|wav)$/,
+				use: [{
+					loader: 'file-loader?name=/sounds/[name].[ext]'
+				}]
+			},
+			{
 				test: /\.md2$/,
 				use: [{
 					loader: 'file-loader?name=/models/[name].[ext]'
