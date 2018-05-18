@@ -127,6 +127,41 @@ export default class Application {
 			message.appendChild(text);
 			document.getElementById('messages').appendChild(message);
 		});
+
+		this.socket.on('receive connection message', data => {
+			const message = document.createElement('p');
+			message.setAttribute('class', 'chat__message');
+			const nickname = document.createElement('span');
+			nickname.setAttribute('class', 'chat__nickname');
+
+			document.getElementById('messages').appendChild(message);
+		});
+	}
+
+	initUserInterface() {
+		const body = document.body;
+
+		const chat = document.createElement('div');
+		chat.setAttribute('class', 'chat');
+
+		const chatMessages = document.createElement('div');
+		chatMessages.setAttribute('class', 'chat__messages');
+		chatMessages.setAttribute('id', 'messages');
+
+		const chatInput = document.createElement('input');
+		chatInput.setAttribute('class', 'chat__input');
+		chatInput.setAttribute('id', 'input');
+		chatInput.setAttribute('type', 'text');
+		chatInput.setAttribute('disabled', 'disabled');
+
+		chat.appendChild(chatMessages);
+		chat.appendChild(chatInput);
+		body.appendChild(chat);
+
+		const overlay = document.createElement('div');
+		overlay.setAttribute('id', 'overlay');
+		overlay.innerHTML = 'CLICK TO ENABLE CONTROLS';
+		body.appendChild(overlay);
 	}
 
 	initUserInterface() {
