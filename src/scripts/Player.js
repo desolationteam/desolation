@@ -15,7 +15,7 @@ export default class Player {
 		this.isWeaponSet = false;
 		this.isAnimated = false;
 		this.health = 100;
-		camera.position.set(-10, 5.5, -25);
+		camera.position.set(-5, 5.5, -25);
 		camera.rotation.y = Math.PI;
 		this.controls = new Controls(this.character.root, camera, scene, socket);
 		scene.add(this.controls.mesh);
@@ -28,13 +28,13 @@ export default class Player {
 		});
 	}
 
-	update(delta) {
-		this.updateMotion(delta);
+	update(delta, isCollision) {
+		this.updateMotion(delta, isCollision);
 		this.updateRotation();
 		this.updateChat();
 	}
 
-	updateMotion(delta) {
+	updateMotion(delta, isCollision) {
 		const oldPosition = Object.assign({}, this.controls.mesh.position);
 		const velocity = new THREE.Vector3();
 		velocity.y -= 9.8 * 100.0 * delta;
@@ -43,7 +43,7 @@ export default class Player {
 
 		let movement = this.controls.movement;
 		if (this.controls.controlsEnabled) {
-			if (movement.forward) {
+			if (movement.forward && !isCollision) {
 				velocity.z += 100 * delta;
 			}
 			if (movement.backward) {

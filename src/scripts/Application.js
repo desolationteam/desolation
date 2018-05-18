@@ -4,6 +4,11 @@ import io from 'socket.io-client';
 import Enemy from './Enemy';
 import Player from './Player';
 
+const raycasterCenter = new THREE.Raycaster();
+const directionCenter = new THREE.Vector3(0, 0, -1);
+const raycasterBottom = new THREE.Raycaster();
+const directionBottom = new THREE.Vector3(0, 0, -1);
+
 export default class Application {
 	constructor(nickname) {
 		this.nickname = nickname;
@@ -17,6 +22,7 @@ export default class Application {
 		this.height = window.innerHeight;
 		this.scene = new THREE.Scene();
 		this.otherPlayers = [];
+		this.isCollision = false;
 		this.initRenderer();
 		this.initCamera();
 		this.initLights();
@@ -31,9 +37,16 @@ export default class Application {
 		window.addEventListener('resize', () => this.resize(), false);
 	}
 
+	checkCollision() {
+		raycasterCenter.setFromCamera( directionCenter, this.camera );
+		const intersects = raycasterCenter.intersectObjects(this.scene.children);
+		this.isCollision = !!intersects[0] && intersects[0].distance <= 35;
+	}
+
 	render() {
 		const delta = this.clock.getDelta();
-		this.player.update(delta);
+		this.checkCollision();
+		this.player.update(delta, this.isCollision);
 		this.player.character.update(delta);
 		this.otherPlayers.forEach(player => player.character.update(delta));
 		this.renderer.render(this.scene, this.camera);
@@ -79,6 +92,22 @@ export default class Application {
 		this.floor.position.z = -50;
 		this.floor.position.y = 0;
 		this.scene.add(this.floor);
+
+		let geometr = new THREE.BoxGeometry(40, 20, 40);
+		let materia = new THREE.MeshBasicMaterial({color: 0x0000ff});
+		this.Box = new THREE.Mesh(geometr, materia);
+		this.Box.position.set(-50, 10, -50);
+		geometr = new THREE.BoxGeometry(20, 30, 30);
+		materia = new THREE.MeshBasicMaterial({color: 0xff0000});
+		this.Box1 = new THREE.Mesh(geometr, materia);
+		this.Box1.position.set(-10, 10, -10);
+		geometr = new THREE.BoxGeometry(40, 40, 50);
+		materia = new THREE.MeshBasicMaterial({color: 0x00ff00});
+		this.Box2 = new THREE.Mesh(geometr, materia);
+		this.Box2.position.set(-100, 10, -50);
+		this.scene.add(this.Box);
+		this.scene.add(this.Box1);
+		this.scene.add(this.Box2);
 	}
 
 	initSounds() {

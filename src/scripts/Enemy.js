@@ -16,7 +16,7 @@ export default class Enemy {
 		this.character.root.health = 100;
 		// todo: add rotation
 		scene.add(this.character.root);
-		const geometry = new THREE.BoxGeometry(10, 25, 10);
+		const geometry = new THREE.BoxGeometry(15, 25, 15);
 		const material = new THREE.MeshBasicMaterial({color: 0x0000ff, transparent: true, opacity: 0});
 		this.hitBox = new THREE.Mesh(geometry, material);
 		this.hitBox.player = this.character.root;

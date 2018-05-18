@@ -156,7 +156,7 @@ export default class Controls{
 				this.isFirstPersonMode = true;
 				this.disableRunAnimation = true;
 			} else {
-				this.camera.position.set(-10, 5.5, -25);
+				this.camera.position.set(-5, 5.5, -25);
 				this.isFirstPersonMode = false;
 				this.disableRunAnimation = false;
 			}
