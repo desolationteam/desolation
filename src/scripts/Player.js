@@ -5,9 +5,12 @@ import MD2Character from './Character';
 import {config} from './Constants';
 
 let lastRotation;
+// const raycasterBottom = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10);
 
 export default class Player {
 	constructor(socket, scene, camera) {
+		this.camera = camera;
+		this.scene = scene;
 		this.character = new MD2Character();
 		this.character.scale = 0.4;
 		this.character.loadParts(config);
@@ -37,30 +40,39 @@ export default class Player {
 	updateMotion(delta, isCollision) {
 		const oldPosition = Object.assign({}, this.controls.mesh.position);
 		const velocity = new THREE.Vector3();
-		velocity.y -= 9.8 * 100.0 * delta;
+		velocity.y -= 9.8 * 600.0 * delta;
 		velocity.x -= velocity.x * 10.0 * delta;
 		velocity.z -= velocity.z * 10.0 * delta;
 
 		let movement = this.controls.movement;
 		if (this.controls.controlsEnabled) {
 			if (movement.forward && !isCollision) {
-				velocity.z += 100 * delta;
+				velocity.z += 3200 * delta;
 			}
 			if (movement.backward) {
-				velocity.z -= 100 * delta;
+				velocity.z -= 3200 * delta;
 			}
 			if (movement.left) {
-				velocity.x += 100 * delta;
+				velocity.x += 3200 * delta;
 			}
 			if (movement.right) {
-				velocity.x -= 100 * delta;
+				velocity.x -= 3200 * delta;
 			}
 			if (movement.jump) {
-				velocity.y += 150;
+				velocity.y += 4000;
 				movement.jump = false;
 			}
 		}
 		movement.jump = false;
+
+		// raycasterBottom.ray.origin.copy( this.controls.mesh.position );
+		// raycasterBottom.ray.origin.y -= 10;
+		// const intersects = raycasterBottom.intersectObjects(this.scene.children);
+		// if (intersects.length > 0) {
+		// 	console.log(intersects);
+		// 	velocity.y = Math.max(0, velocity.y);
+		// }
+
 		if (this.controls.disableRunAnimation && !!this.character.meshBody) {
 			this.isAnimated = false;
 			if (this.character.meshBody.activeAction) {
@@ -72,9 +84,9 @@ export default class Player {
 				this.character.meshWeapon.activeAction = null;
 			}
 		}
-		this.controls.mesh.translateX(velocity.x);
-		this.controls.mesh.translateY(velocity.y);
-		this.controls.mesh.translateZ(velocity.z);
+		this.controls.mesh.translateX(velocity.x * delta);
+		this.controls.mesh.translateY(velocity.y * delta);
+		this.controls.mesh.translateZ(velocity.z * delta);
 
 		if (this.controls.mesh.position.y < 10) {
 			velocity.y = 0;

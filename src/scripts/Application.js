@@ -6,8 +6,6 @@ import Player from './Player';
 
 const raycasterCenter = new THREE.Raycaster();
 const directionCenter = new THREE.Vector3(0, 0, -1);
-const raycasterBottom = new THREE.Raycaster();
-const directionBottom = new THREE.Vector3(0, 0, -1);
 
 export default class Application {
 	constructor(nickname) {
@@ -77,7 +75,7 @@ export default class Application {
 	}
 
 	initFloor() {
-		const geometry = new THREE.PlaneGeometry(500, 500, 32);
+		const geometry = new THREE.PlaneGeometry(500, 500, 100, 100);
 		const texture = new THREE.TextureLoader().load('textures/floor-1.png');
 		texture.wrapS = THREE.RepeatWrapping;
 		texture.wrapT = THREE.RepeatWrapping;
@@ -96,15 +94,15 @@ export default class Application {
 		let geometr = new THREE.BoxGeometry(40, 20, 40);
 		let materia = new THREE.MeshBasicMaterial({color: 0x0000ff});
 		this.Box = new THREE.Mesh(geometr, materia);
-		this.Box.position.set(-50, 10, -50);
+		this.Box.position.set(-50, 20, -50);
 		geometr = new THREE.BoxGeometry(20, 30, 30);
 		materia = new THREE.MeshBasicMaterial({color: 0xff0000});
 		this.Box1 = new THREE.Mesh(geometr, materia);
-		this.Box1.position.set(-10, 10, -10);
+		this.Box1.position.set(-10, 20, -10);
 		geometr = new THREE.BoxGeometry(40, 40, 50);
 		materia = new THREE.MeshBasicMaterial({color: 0x00ff00});
 		this.Box2 = new THREE.Mesh(geometr, materia);
-		this.Box2.position.set(-100, 10, -50);
+		this.Box2.position.set(-100, 20, -50);
 		this.scene.add(this.Box);
 		this.scene.add(this.Box1);
 		this.scene.add(this.Box2);
@@ -245,15 +243,6 @@ export default class Application {
 			}
 			message.appendChild(nickname);
 			message.appendChild(text);
-			document.getElementById('messages').appendChild(message);
-		});
-
-		this.socket.on('receive connection message', data => {
-			const message = document.createElement('p');
-			message.setAttribute('class', 'chat__message');
-			const nickname = document.createElement('span');
-			nickname.setAttribute('class', 'chat__nickname');
-
 			document.getElementById('messages').appendChild(message);
 		});
 	}
