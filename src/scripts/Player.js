@@ -107,6 +107,7 @@ export default class Player {
 			if (lastRotation !== curRotation) {
 				this.socket.emit('move', {
 					state: {
+						position: this.controls.mesh.position,
 						rotation: {
 							y: this.controls.mesh.rotation.y,
 						}

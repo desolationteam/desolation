@@ -112,8 +112,7 @@ export default class Controls{
 		document.addEventListener('keypress', onKeyPress, false);
 	}
 
-	shootRay() {
-		console.log('shoot');
+	shoot() {
 		const raycaster = new THREE.Raycaster();
 		const direction = new THREE.Vector3(0, 0, -1);
 		raycaster.setFromCamera( direction, this.camera );
@@ -141,6 +140,7 @@ export default class Controls{
 
 	initPointerLockControls() {
 		let timer;
+		const shoot = this.shoot.bind(this);
 		const havePointerLock = 'pointerLockElement' in document ||
 			'mozPointerLockElement' in document ||
 			'webkitPointerLockElement' in document;
@@ -159,12 +159,12 @@ export default class Controls{
 					document.webkitPointerLockElement === element) {
 					this.controlsEnabled = true;
 					document.addEventListener('mousemove', onMouseMove, false);
-					document.addEventListener('mousedown', this.shootRay.bind(this), false);
+					document.addEventListener('mousedown', shoot, false);
 					document.getElementById('overlay').className = 'hide';
 				} else {
 					this.controlsEnabled = false;
 					document.removeEventListener('mousemove', onMouseMove, false);
-					document.removeEventListener('mousedown', this.shootRay.bind(this), false);
+					document.removeEventListener('mousedown', shoot, false);
 					document.getElementById('overlay').className = '';
 				}
 			};

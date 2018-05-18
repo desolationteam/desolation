@@ -1,11 +1,6 @@
 import * as THREE from 'three';
 import MD2Character from './Character';
 import { config } from './Constants';
-import * as THREE from 'three';
-
-const geometry = new THREE.BoxGeometry(10, 25, 10);
-const material = new THREE.MeshBasicMaterial({color: 0x0000ff, transparent: true, opacity: 0});
-const cube = new THREE.Mesh(geometry, material);
 
 const geometry = new THREE.BoxGeometry(10, 25, 10);
 const material = new THREE.MeshBasicMaterial({color: 0x0000ff, transparent: true, opacity: 0});
@@ -21,6 +16,7 @@ export default class Enemy {
 		this.character.root.position.y = data.position.y;
 		this.character.root.position.x = data.position.x;
 		this.character.root.position.z = data.position.z;
+		// todo: add rotation
 		scene.add(this.character.root);
 		scene.add(cube);
 	}
