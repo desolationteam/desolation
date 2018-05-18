@@ -127,15 +127,6 @@ export default class Application {
 			message.appendChild(text);
 			document.getElementById('messages').appendChild(message);
 		});
-
-		this.socket.on('receive connection message', data => {
-			const message = document.createElement('p');
-			message.setAttribute('class', 'chat__message');
-			const nickname = document.createElement('span');
-			nickname.setAttribute('class', 'chat__nickname');
-
-			document.getElementById('messages').appendChild(message);
-		});
 	}
 
 	initUserInterface() {
