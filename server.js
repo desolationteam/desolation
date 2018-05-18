@@ -22,13 +22,13 @@ io.on('connection', socket => {
 function setListeners(socket) {
 	socket.on('new player', data => {
 		socket.playerData = Object.assign({}, data, {index: socket.index});
+		io.emit('receive message', {
+			type: 'connect',
+			nickname: socket.playerData.nickname
+		});
 		const filtered = connections.filter(connection => connection.index !== socket.index);
 		filtered.forEach(connection => {
 			connection.emit('create player', socket.playerData);
-			connection.emit('receive message', {
-				type: 'connect',
-				nickname: socket.playerData.nickname
-			});
 		});
 		const playersData = filtered.map(player => player.playerData);
 		playersData.forEach(data => {if (data) socket.emit('create player', data);});
@@ -51,7 +51,7 @@ function setListeners(socket) {
 	});
 
 	socket.on('disconnect', () => {
-		if (socket.playerData) {
+		if (socket.playerData && socket.playerData.nickname) {
 			const nickname = socket.playerData.nickname;
 			io.emit('receive message', {
 				type: 'disconnect',
