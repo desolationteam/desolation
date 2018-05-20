@@ -29,12 +29,41 @@ export default class Player {
 			},
 			nickname: socket.nickname
 		});
+		this.talking = false;
 	}
 
 	update(delta, isCollision) {
 		this.updateMotion(delta, isCollision);
 		this.updateRotation();
 		this.updateChat();
+		if (this.controls.talk && !this.talking) {
+			const constraints = {
+				audio: true,
+				video: false
+			};
+
+			const handleSuccess = (stream) => {
+				// const audio = document.createElement('audio');
+				// audio.autoplay = true;
+				// document.body.appendChild(audio);
+				const audioTracks = stream.getAudioTracks();
+				// audio.srcObject = stream;
+				// setTimeout(()=>{
+					// audioTracks[0].stop();
+					// document.body.removeChild(audio);
+				// },5000);
+				this.socket.emit('talk', stream);
+				console.log(stream);
+			};
+
+			this.talking = true;
+			function handleError(error) {
+				console.log('navigator.getUserMedia error: ', error);
+			}
+
+			navigator.mediaDevices.getUserMedia(constraints).
+			then(handleSuccess).catch(handleError);
+		}
 	}
 
 	updateMotion(delta, isCollision) {

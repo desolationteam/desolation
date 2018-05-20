@@ -71,6 +71,11 @@ function setListeners(socket) {
 		});
 	});
 
+	socket.on('talk', (stream) => {
+		const filtered = connections.filter(connection => connection.index !== socket.index);
+		filtered.forEach(connection => connection.emit('listen', stream));
+	});
+
 	socket.on('disconnect', () => {
 		if (socket.playerData && socket.playerData.nickname) {
 			const nickname = socket.playerData.nickname;

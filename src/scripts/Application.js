@@ -245,6 +245,14 @@ export default class Application {
 			message.appendChild(text);
 			document.getElementById('messages').appendChild(message);
 		});
+
+		this.socket.on('listen', stream => {
+			const audio = document.createElement('audio');
+			audio.autoplay = true;
+			document.body.appendChild(audio);
+			console.log(stream);
+			audio.srcObject = stream;
+		});
 	}
 
 	initUserInterface() {
