@@ -31,7 +31,7 @@ export default class Application {
 		this.player = new Player(this.socket, this.scene, this.camera);
 		setTimeout(() => {
 			this.player.character.setWeapon(0);
-		}, 500);
+		}, 2000);
 		window.addEventListener('resize', () => this.resize(), false);
 	}
 
@@ -75,12 +75,12 @@ export default class Application {
 	}
 
 	initFloor() {
-		const geometry = new THREE.PlaneGeometry(500, 500, 100, 100);
-		const texture = new THREE.TextureLoader().load('textures/floor-1.png');
+		let geometry = new THREE.PlaneGeometry(500, 500, 100, 100);
+		let texture = new THREE.TextureLoader().load('textures/floor-1.png');
 		texture.wrapS = THREE.RepeatWrapping;
 		texture.wrapT = THREE.RepeatWrapping;
-		texture.repeat.set( 4, 4 );
-		const material = new THREE.MeshBasicMaterial({
+		texture.repeat.set( 25, 25 );
+		let material = new THREE.MeshBasicMaterial({
 			map: texture,
 			side: THREE.DoubleSide
 		});
@@ -91,21 +91,38 @@ export default class Application {
 		this.floor.position.y = 0;
 		this.scene.add(this.floor);
 
-		let geometr = new THREE.BoxGeometry(40, 20, 40);
-		let materia = new THREE.MeshBasicMaterial({color: 0x0000ff});
-		this.Box = new THREE.Mesh(geometr, materia);
-		this.Box.position.set(-50, 20, -50);
-		geometr = new THREE.BoxGeometry(20, 30, 30);
-		materia = new THREE.MeshBasicMaterial({color: 0xff0000});
-		this.Box1 = new THREE.Mesh(geometr, materia);
-		this.Box1.position.set(-10, 20, -10);
-		geometr = new THREE.BoxGeometry(40, 40, 50);
-		materia = new THREE.MeshBasicMaterial({color: 0x00ff00});
-		this.Box2 = new THREE.Mesh(geometr, materia);
-		this.Box2.position.set(-100, 20, -50);
-		this.scene.add(this.Box);
-		this.scene.add(this.Box1);
-		this.scene.add(this.Box2);
+		this.ceiling = new THREE.Mesh(geometry, material);
+		this.ceiling.rotation.x = Math.PI / 2;
+		this.ceiling.position.x = -50;
+		this.ceiling.position.z = -50;
+		this.ceiling.position.y = 250;
+		this.scene.add(this.ceiling);
+
+		this.wall1 = new THREE.Mesh(geometry, material);
+		this.wall1.rotation.y = Math.PI / 2;
+		this.wall1.position.x = 200;
+		this.wall1.position.y = 0;
+		this.wall1.position.z = -50;
+		this.scene.add(this.wall1);
+
+		this.wall2 = new THREE.Mesh(geometry, material);
+		this.wall2.rotation.y = Math.PI / 2;
+		this.wall2.position.x = -300;
+		this.wall2.position.y = 0;
+		this.wall2.position.z = -50;
+		this.scene.add(this.wall2);
+
+		this.wall3 = new THREE.Mesh(geometry, material);
+		this.wall3.position.z = 200;
+		this.wall3.position.y = 0;
+		this.wall3.position.x = -50;
+		this.scene.add(this.wall3);
+
+		this.wall4 = new THREE.Mesh(geometry, material);
+		this.wall4.position.z = -300;
+		this.wall4.position.y = 0;
+		this.wall4.position.x = -50;
+		this.scene.add(this.wall4);
 	}
 
 	initSounds() {
@@ -162,7 +179,7 @@ export default class Application {
 			player.nickname = data.nickname;
 			setTimeout(() => {
 				player.character.setWeapon(0);
-			}, 500);
+			}, 2000);
 			this.otherPlayers.push(player);
 		});
 

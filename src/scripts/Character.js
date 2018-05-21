@@ -175,7 +175,10 @@ const MD2Character = function () {
 				this.meshWeapon.activeAction = null;
 			}
 
-			let action = this.mixer.clipAction( clipName, this.meshWeapon );
+			let action;
+			if (this.mixer) {
+				action = this.mixer.clipAction( clipName, this.meshWeapon );
+			}
 			if( action ) {
 
 				this.meshWeapon.activeAction =

@@ -1,4 +1,5 @@
 import './floor-1.png';
+import './wall-1.png';
 import './ctf_b.png';
 import './ctf_r.png';
 import './dead.png';
