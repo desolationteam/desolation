@@ -30,6 +30,31 @@ export default class Player {
 			nickname: socket.nickname
 		});
 		this.talking = false;
+		this.PeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+		this.IceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
+		this.SessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
+		navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+
+		navigator.getUserMedia(
+			{ audio: true, video: false },
+			this.gotStream.bind(this),
+			error => console.log(error)
+		);
+		this.pc = new this.PeerConnection(null);
+
+		this.socket.on('talk', (message) => {
+			if (message.type === 'offer') {
+				this.pc.setRemoteDescription(new this.SessionDescription(message));
+				this.createAnswer();
+			}
+			else if (message.type === 'answer') {
+				this.pc.setRemoteDescription(new this.SessionDescription(message));
+			}
+			else if (message.type === 'candidate') {
+				const candidate = new this.IceCandidate({sdpMLineIndex: message.label, candidate: message.candidate});
+				this.pc.addIceCandidate(candidate);
+			}
+		});
 	}
 
 	update(delta, isCollision) {
@@ -37,32 +62,13 @@ export default class Player {
 		this.updateRotation();
 		this.updateChat();
 		if (this.controls.talk && !this.talking) {
-			const constraints = {
-				audio: true,
-				video: false
-			};
-
-			const handleSuccess = (stream) => {
-				// const audio = document.createElement('audio');
-				// audio.autoplay = true;
-				// document.body.appendChild(audio);
-				const audioTracks = stream.getAudioTracks();
-				// audio.srcObject = stream;
-				// setTimeout(()=>{
-					// audioTracks[0].stop();
-					// document.body.removeChild(audio);
-				// },5000);
-				this.socket.emit('talk', stream);
-				console.log(stream);
-			};
-
 			this.talking = true;
-			function handleError(error) {
-				console.log('navigator.getUserMedia error: ', error);
-			}
-
-			navigator.mediaDevices.getUserMedia(constraints).
-			then(handleSuccess).catch(handleError);
+			this.createOffer();
+		}
+		if (!this.controls.talk && this.talking) {
+			this.pc.close();
+			this.pc = new this.PeerConnection(null);
+			this.talking = false;
 		}
 	}
 
@@ -174,5 +180,61 @@ export default class Player {
 			}
 		}
 	}
+
+	gotStream(stream) {
+		this.pc = new this.PeerConnection(null);
+		this.pc.addStream(stream);
+		this.pc.onicecandidate = this.gotIceCandidate.bind(this);
+		this.pc.onaddstream = this.gotRemoteStream.bind(this);
+	}
+
+// Step 2. createOffer
+	createOffer() {
+		this.pc.createOffer(
+			this.gotLocalDescription.bind(this),
+			error => console.log(error),
+			{'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': false } }
+		);
+	}
+
+
+// Step 3. createAnswer
+	createAnswer() {
+		this.pc.createAnswer(
+			this.gotLocalDescription.bind(this),
+			error => console.log(error),
+			{ 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': false } }
+		);
+	}
+
+
+	gotLocalDescription(description) {
+		this.pc.setLocalDescription(description);
+		this.sendMessage(description);
+	}
+
+	gotIceCandidate(event) {
+		if (event.candidate) {
+			this.sendMessage({
+				type: 'candidate',
+				label: event.candidate.sdpMLineIndex,
+				id: event.candidate.sdpMid,
+				candidate: event.candidate.candidate
+			});
+		}
+	}
+
+	gotRemoteStream(event) {
+		const audio = document.createElement('audio');
+		audio.autoplay = true;
+		document.body.appendChild(audio);
+		audio.src = URL.createObjectURL(event.stream);
+	}
+
+	sendMessage(message) {
+		this.socket.emit('talk', message);
+	}
 }
+
+
 

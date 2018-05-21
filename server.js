@@ -71,9 +71,9 @@ function setListeners(socket) {
 		});
 	});
 
-	socket.on('talk', (stream) => {
+	socket.on('talk', (message) => {
 		const filtered = connections.filter(connection => connection.index !== socket.index);
-		filtered.forEach(connection => connection.emit('listen', stream));
+		filtered.forEach(connection => connection.emit('talk', message));
 	});
 
 	socket.on('disconnect', () => {
