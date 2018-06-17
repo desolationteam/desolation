@@ -12,7 +12,7 @@ module.exports = {
 		app: './src/index.js'
 	},
 	output: {
-		filename: '[name].[hash].js',
+		filename: '[name].js',
 		path: path.resolve(__dirname, 'dist')
 	},
 	module: {
@@ -88,7 +88,7 @@ module.exports = {
 			filename: './index.html'
 		}),
 		new MiniCssExtractPlugin({
-			filename: '[name].[hash].css'
+			filename: '[name].css'
 		}),
 		new UglifyJSPlugin({
 			sourceMap: true
