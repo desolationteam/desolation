@@ -132,17 +132,10 @@ export default class Application {
 		let loadingManager = new THREE.LoadingManager();
 		let audioLoader = new THREE.AudioLoader(loadingManager);
 		this.sounds.soundShoot = new THREE.Audio(listener);
-		this.sounds.soundGlobal = new THREE.Audio(listener);
 		this.sounds.soundAnnounce1 = new THREE.Audio(listener);
 		this.sounds.soundAnnounce2 = new THREE.Audio(listener);
 		this.sounds.soundAnnounce3 = new THREE.Audio(listener);
 		this.sounds.soundAnnounce4 = new THREE.Audio(listener);
-		audioLoader.load('sounds/outOfBattleSound.mp3', (buffer) => {
-			this.sounds.soundGlobal.setBuffer(buffer);
-			this.sounds.soundGlobal.setLoop(true);
-			this.sounds.soundGlobal.setVolume(0.2);
-			this.sounds.soundGlobal.play();
-		});
 		audioLoader.load('sounds/rocketShot.mp3', (buffer) => {
 			this.sounds.soundShoot.setBuffer(buffer);
 			this.sounds.soundShoot.setVolume(1);
