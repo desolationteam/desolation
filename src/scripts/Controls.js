@@ -60,8 +60,11 @@ export default class Controls{
 					if (this.canJump === true) this.movement.jump = true;
 					this.canJump = false;
 					break;
-				case 86:
+				case 86: // v
 					this.toggleViewMode();
+					break;
+				case 75: //k
+					this.talk = true;
 					break;
 			}
 		};
@@ -85,6 +88,9 @@ export default class Controls{
 					break;
 				case 86:
 					this.isViewModeCanBeChanged = true;
+					break;
+				case 75: //k
+					this.talk = false;
 					break;
 			}
 		};

@@ -255,6 +255,7 @@ export default class Application {
 			message.appendChild(text);
 			document.getElementById('messages').appendChild(message);
 		});
+
 	}
 
 	initUserInterface() {
